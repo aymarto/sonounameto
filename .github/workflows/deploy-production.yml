@@ -81,8 +81,19 @@ jobs:
         run: |
           echo "Déploiement FTP terminé : https://${{ env.DOMAIN }}"
           echo ""
-          echo "Étape manuelle sur cPanel (après chaque déploiement) :"
+          echo "Étape manuelle sur cPanel (OBLIGATOIRE après chaque déploiement) :"
           echo "  1. Setup Node.js App → Run NPM Install"
           echo "  2. Restart l'application (startup: server.js)"
+          echo "  3. LiteSpeed → Purge All (vider le cache)"
           echo ""
+          echo "Si le site affiche 403 : supprimer public/.htaccess sur le serveur (ne pas le remettre)."
           echo "node_modules n'est PAS envoyé par FTP — il est créé sur le serveur."
+
+      - name: Smoke test (site accessible)
+        continue-on-error: true
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ env.DOMAIN }}/" || echo "000")
+          echo "HTTP $code pour https://${{ env.DOMAIN }}/"
+          if [ "$code" = "403" ]; then
+            echo "::warning::403 détecté — supprimez public/.htaccess sur le serveur et redémarrez Node."
+          fi

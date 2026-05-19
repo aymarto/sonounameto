@@ -76,4 +76,20 @@ Si le site en production répond avec l’en-tête `Server: fastestcache` ou `s-
 2. **Setup Node.js App** → **Restart**
 3. Sur le téléphone : fermer l’onglet, rouvrir le site (ou navigation privée pour tester)
 
-Le fichier `public/.htaccess` demande à LiteSpeed de ne pas cacher les pages HTML (à déployer avec le prochain push).
+## ⚠️ Site en 403 Forbidden (urgent)
+
+Le commit `cache manage` a déployé un `public/.htaccess` avec `CacheDisable public /` qui **bloque tout le site** sur LiteSpeed.
+
+**À faire tout de suite (FTP ou Gestionnaire de fichiers cPanel) :**
+
+1. Supprimer le fichier **`public/.htaccess`** sur le serveur (dossier `public` à côté de `server.js`).
+2. cPanel → **Setup Node.js App** → **Run NPM Install** → **Restart**.
+3. **LiteSpeed Web Cache Manager** → **Purge All**.
+4. Tester en navigation privée : https://sonounameto.aymart.bj
+
+Le projet **n’utilise plus** de `.htaccess` (Next.js gère le cache via `next.config.mjs`). Poussez le dernier commit après suppression du fichier sur le serveur.
+
+## Erreur 403 (autres causes)
+
+- Application Node arrêtée ou `node_modules` absent → **Run NPM Install** + **Restart**.
+- `server.js` absent à la racine → revérifier le déploiement FTP / GitHub Actions.
