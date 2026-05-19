@@ -5,8 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:simple": "next build && node scripts/prepare-deploy.js",
     "start": "next start",
-    "lint": "next lint"
+    "start:deploy": "node server.js",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "firebase": "^12.13.0",
