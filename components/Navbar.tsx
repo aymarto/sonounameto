@@ -34,8 +34,8 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-ink text-white">
-      <div className="container-page flex h-16 items-center md:h-20">
+    <header className="site-header sticky top-0 z-50 w-full border-b border-white/10 bg-ink text-white">
+      <div className="container-page flex h-14 items-center md:h-16">
         <div className="flex w-full items-center justify-between md:hidden">
           <Link
             href="/"
@@ -114,7 +114,7 @@ export default function Navbar() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`block py-3 text-sm uppercase tracking-wide-xl ${
+                className={`block py-2.5 text-sm uppercase tracking-wide-xl ${
                   pathname === link.href ? "text-white" : "text-neutral-400"
                 }`}
               >

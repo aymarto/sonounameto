@@ -19,13 +19,13 @@ export default function EvenementsPage() {
         description="Expositions, résidences et salons. Les prochains rendez-vous pour découvrir les œuvres en personne."
       />
 
-      <section className="bg-white py-16 md:py-24">
-        <div className="container-page space-y-16">
+      <section className="page-content">
+        <div className="container-page space-y-10 md:space-y-12">
           {events.map((ev, i) => (
             <article
               key={ev.id}
               id={ev.id}
-              className={`grid gap-8 md:grid-cols-2 md:items-center md:gap-16 ${
+              className={`grid gap-6 md:grid-cols-2 md:items-center md:gap-10 ${
                 i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
@@ -44,11 +44,11 @@ export default function EvenementsPage() {
                 <p className="eyebrow">
                   {formatDateRange(ev.startDate, ev.endDate)}
                 </p>
-                <h2 className="section-title mt-3">{ev.title}</h2>
-                <p className="mt-2 text-sm uppercase tracking-wide-xl text-neutral-500">
+                <h2 className="section-title mt-2">{ev.title}</h2>
+                <p className="mt-1 text-sm uppercase tracking-wide-xl text-neutral-500">
                   {ev.location}
                 </p>
-                <p className="mt-6 max-w-xl text-neutral-700 leading-relaxed">
+                <p className="mt-4 max-w-xl text-neutral-700 leading-relaxed">
                   {ev.description}
                 </p>
               </div>

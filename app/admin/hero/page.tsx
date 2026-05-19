@@ -6,12 +6,16 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { getHero, setHero } from "@/lib/firestore";
-import { DEFAULT_HERO } from "@/lib/types";
+import { normalizeHeroSettings } from "@/lib/hero";
+import { DEFAULT_HERO, DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
+
+const SLIDE_LABELS = ["Image 1", "Image 2", "Image 3"];
 
 export default function AdminHeroPage() {
   const { user, firebaseReady } = useAuth();
   const [hero, setHeroState] = useState<HeroSettings | null>(null);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +26,7 @@ export default function AdminHeroPage() {
     (async () => {
       try {
         const h = await getHero();
-        if (!cancelled) setHeroState(h);
+        if (!cancelled) setHeroState(normalizeHeroSettings(h));
       } catch (err) {
         console.error(err);
         if (!cancelled) setHeroState(DEFAULT_HERO);
@@ -33,6 +37,19 @@ export default function AdminHeroPage() {
     };
   }, [firebaseReady, user]);
 
+  function updateSlide(
+    index: number,
+    value: { url: string; path?: string } | null
+  ) {
+    if (!hero) return;
+    const slides = [...hero.slides];
+    slides[index] = {
+      imageUrl: value?.url ?? DEFAULT_HERO_SLIDES[index]?.imageUrl ?? "",
+      imagePath: value?.path,
+    };
+    setHeroState({ ...hero, slides });
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!hero) return;
@@ -40,7 +57,7 @@ export default function AdminHeroPage() {
     setError(null);
     setStatus(null);
     try {
-      await setHero(hero);
+      await setHero(normalizeHeroSettings(hero));
       setStatus("Modifications enregistrées.");
     } catch (err) {
       console.error(err);
@@ -56,19 +73,21 @@ export default function AdminHeroPage() {
         <AdminHeader
           eyebrow="Accueil"
           title="Hero"
-          description="Image de fond et textes affichés en haut de la page d'accueil."
+          description="Diaporama et textes de la page d'accueil."
         />
         <p className="text-sm text-neutral-500">Chargement…</p>
       </>
     );
   }
 
+  const previewSlide = hero.slides[previewIndex] ?? hero.slides[0];
+
   return (
     <>
       <AdminHeader
         eyebrow="Accueil"
-        title="Hero / Image d'accueil"
-        description="Image de fond et textes affichés en haut de la page d'accueil."
+        title="Hero / Diaporama"
+        description="3 images en rotation sur l'accueil, plus les textes affichés par-dessus."
       />
 
       <form
@@ -88,7 +107,7 @@ export default function AdminHeroPage() {
               onChange={(e) =>
                 setHeroState({ ...hero, title: e.target.value })
               }
-              className="input-line mt-2"
+              className="input-line mt-2 font-display"
             />
           </div>
           <div>
@@ -102,7 +121,7 @@ export default function AdminHeroPage() {
               onChange={(e) =>
                 setHeroState({ ...hero, subtitle: e.target.value })
               }
-              className="input-line mt-2"
+              className="input-line mt-2 font-display"
             />
           </div>
           <div>
@@ -120,27 +139,28 @@ export default function AdminHeroPage() {
             />
           </div>
 
-          <ImageUploader
-            folder="hero"
-            value={
-              hero.imageUrl
-                ? { url: hero.imageUrl, path: hero.imagePath }
-                : undefined
-            }
-            onChange={(value) =>
-              setHeroState({
-                ...hero,
-                imageUrl: value?.url ?? DEFAULT_HERO.imageUrl,
-                imagePath: value?.path,
-              })
-            }
-            label="Image de fond"
-            aspect="landscape"
-          />
+          <div className="space-y-8 border-t border-black/10 pt-8">
+            <p className="eyebrow">3 images du diaporama</p>
+            {SLIDE_LABELS.map((label, i) => (
+              <ImageUploader
+                key={label}
+                folder="hero"
+                label={label}
+                aspect="landscape"
+                value={
+                  hero.slides[i]?.imageUrl
+                    ? {
+                        url: hero.slides[i].imageUrl,
+                        path: hero.slides[i].imagePath,
+                      }
+                    : undefined
+                }
+                onChange={(value) => updateSlide(i, value)}
+              />
+            ))}
+          </div>
 
-          {status && (
-            <p className="text-sm text-neutral-700">{status}</p>
-          )}
+          {status && <p className="text-sm text-neutral-700">{status}</p>}
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="flex items-center gap-4 border-t border-black/10 pt-6">
@@ -154,13 +174,12 @@ export default function AdminHeroPage() {
           </div>
         </div>
 
-        {/* Live preview */}
         <div>
           <p className="eyebrow mb-3">Aperçu</p>
-          <div className="relative aspect-[3/4] w-full overflow-hidden border border-black/10">
-            {hero.imageUrl && (
+          <div className="relative aspect-[3/4] w-full overflow-hidden border border-black/10 bg-neutral-900">
+            {previewSlide?.imageUrl && (
               <Image
-                src={hero.imageUrl}
+                src={previewSlide.imageUrl}
                 alt=""
                 fill
                 sizes="(min-width: 768px) 40vw, 100vw"
@@ -182,8 +201,24 @@ export default function AdminHeroPage() {
               <p className="mt-4 text-sm text-white/85">{hero.description}</p>
             </div>
           </div>
+          <div className="mt-3 flex gap-2">
+            {hero.slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setPreviewIndex(i)}
+                className={`h-px ${
+                  i === previewIndex ? "w-8 bg-black" : "w-5 bg-neutral-300"
+                }`}
+                aria-label={`Aperçu image ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </form>
     </>
   );
 }
+
+
+

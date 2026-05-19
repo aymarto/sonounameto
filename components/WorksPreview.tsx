@@ -7,19 +7,19 @@ export default function WorksPreview() {
   const preview = artworks.slice(0, 4);
 
   return (
-    <section className="bg-paper py-20 md:py-28">
+    <section className="section-pad bg-paper">
       <div className="container-page">
         <div className="flex items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Quelques œuvres</p>
-            <h2 className="section-title mt-3">Sélection récente</h2>
+            <h2 className="section-title mt-2">Sélection récente</h2>
           </div>
           <Link href="/galerie" className="btn-line hidden md:inline-flex">
             Voir tout
           </Link>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {preview.map((art) => (
             <Link
               key={art.id}
@@ -31,7 +31,9 @@ export default function WorksPreview() {
                   src={art.imageUrl}
                   alt={art.title}
                   fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 50vw"
+                  quality={70}
+                  loading="lazy"
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               </div>
@@ -47,7 +49,7 @@ export default function WorksPreview() {
           ))}
         </div>
 
-        <div className="mt-12 md:hidden">
+        <div className="mt-8 md:hidden">
           <Link href="/galerie" className="btn-line">
             Voir tout
           </Link>

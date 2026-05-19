@@ -4,12 +4,12 @@ import { formatDateRange } from "@/lib/format";
 
 export default function EventsPreview() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="section-pad bg-white">
       <div className="container-page">
         <div className="flex items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Agenda</p>
-            <h2 className="section-title mt-3">Évènements à venir</h2>
+            <h2 className="section-title mt-2">Évènements à venir</h2>
           </div>
           <Link href="/evenements" className="btn-line hidden md:inline-flex">
             Tous les évènements
@@ -20,7 +20,7 @@ export default function EventsPreview() {
           {events.map((ev) => (
             <li
               key={ev.id}
-              className="grid gap-2 py-6 md:grid-cols-[200px_1fr_auto] md:items-center md:gap-8 md:py-8"
+              className="grid gap-2 py-5 md:grid-cols-[200px_1fr_auto] md:items-center md:gap-6 md:py-6"
             >
               <p className="text-xs uppercase tracking-wide-xl text-neutral-500">
                 {formatDateRange(ev.startDate, ev.endDate)}
@@ -41,7 +41,7 @@ export default function EventsPreview() {
           ))}
         </ul>
 
-        <div className="mt-10 md:hidden">
+        <div className="mt-6 md:hidden">
           <Link href="/evenements" className="btn-line">
             Tous les évènements
           </Link>

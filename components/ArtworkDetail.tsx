@@ -11,10 +11,13 @@ import type { Artwork } from "@/lib/types";
 
 type Props = {
   id: string;
+  initialArtwork?: Artwork | null;
 };
 
-export default function ArtworkDetail({ id }: Props) {
-  const [artwork, setArtwork] = useState<Artwork | null | undefined>(undefined);
+export default function ArtworkDetail({ id, initialArtwork }: Props) {
+  const [artwork, setArtwork] = useState<Artwork | null | undefined>(
+    initialArtwork !== undefined ? initialArtwork : undefined
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -27,10 +30,10 @@ export default function ArtworkDetail({ id }: Props) {
           return;
         }
       } catch {
-        // Firestore indisponible → données statiques
+        // Firestore indisponible
       }
 
-      if (!cancelled) {
+      if (!cancelled && initialArtwork === undefined) {
         setArtwork(getStaticArtwork(id) ?? null);
       }
     })();
@@ -38,13 +41,21 @@ export default function ArtworkDetail({ id }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, initialArtwork]);
 
   if (artwork === undefined) {
     return (
-      <section className="bg-white py-24">
-        <div className="container-page">
-          <p className="text-sm text-neutral-500">Chargement de l&apos;œuvre…</p>
+      <section className="page-content">
+        <div className="container-page animate-pulse">
+          <div className="h-4 w-32 bg-neutral-200" />
+          <div className="mt-6 grid gap-8 lg:grid-cols-2">
+            <div className="aspect-[4/5] bg-neutral-200 md:aspect-[3/4]" />
+            <div className="space-y-4">
+              <div className="h-10 w-3/4 bg-neutral-200" />
+              <div className="h-4 w-1/4 bg-neutral-200" />
+              <div className="h-24 bg-neutral-100" />
+            </div>
+          </div>
         </div>
       </section>
     );
@@ -52,14 +63,14 @@ export default function ArtworkDetail({ id }: Props) {
 
   if (artwork === null) {
     return (
-      <section className="bg-white py-24">
+      <section className="page-content">
         <div className="container-page max-w-lg">
           <p className="eyebrow">Galerie</p>
-          <h1 className="section-title mt-3">Œuvre introuvable</h1>
-          <p className="mt-4 text-neutral-600">
+          <h1 className="section-title mt-2">Œuvre introuvable</h1>
+          <p className="mt-3 text-neutral-600">
             Cette œuvre n&apos;existe pas ou a été retirée de la galerie.
           </p>
-          <Link href="/galerie" className="btn-line mt-8 inline-flex">
+          <Link href="/galerie" className="btn-line mt-6 inline-flex">
             Retour à la galerie
           </Link>
         </div>
@@ -70,7 +81,7 @@ export default function ArtworkDetail({ id }: Props) {
   const images = getArtworkImages(artwork);
 
   return (
-    <section className="bg-white py-12 md:py-20">
+    <section className="page-content">
       <div className="container-page">
         <Link
           href="/galerie"
@@ -79,28 +90,28 @@ export default function ArtworkDetail({ id }: Props) {
           ← Retour à la galerie
         </Link>
 
-        <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">
+        <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-10 lg:items-start">
           <ArtworkGallery images={images} title={artwork.title} />
 
           <div>
             <p className="eyebrow">Œuvre</p>
-            <h1 className="section-title mt-3">{artwork.title}</h1>
+            <h1 className="section-title mt-2">{artwork.title}</h1>
             <p className="mt-2 text-xs uppercase tracking-wide-xl text-neutral-500">
               {formatDate(artwork.date)}
             </p>
 
-            <p className="mt-6 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-4 text-sm leading-relaxed text-neutral-600">
               {artwork.shortDescription}
             </p>
 
             {artwork.description && (
-              <div className="mt-6 text-neutral-700 leading-relaxed">
+              <div className="mt-4 text-neutral-700 leading-relaxed">
                 <p>{artwork.description}</p>
               </div>
             )}
 
             {(artwork.medium || artwork.dimensions) && (
-              <dl className="mt-10 grid gap-6 border-t border-black/10 pt-8 sm:grid-cols-2">
+              <dl className="mt-6 grid gap-4 border-t border-black/10 pt-6 sm:grid-cols-2">
                 {artwork.medium && (
                   <div>
                     <dt className="eyebrow">Médium</dt>
@@ -116,7 +127,7 @@ export default function ArtworkDetail({ id }: Props) {
               </dl>
             )}
 
-            <div className="mt-10 flex flex-wrap gap-6">
+            <div className="mt-6 flex flex-wrap gap-5">
               <Link href="/contact" className="btn-line">
                 Demander des informations
               </Link>
@@ -133,3 +144,6 @@ export default function ArtworkDetail({ id }: Props) {
     </section>
   );
 }
+
+
+

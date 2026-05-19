@@ -14,11 +14,11 @@ export default function Newsletter() {
   }
 
   return (
-    <section className="bg-ink py-20 text-white md:py-24">
-      <div className="container-page grid gap-10 md:grid-cols-2 md:items-end">
+    <section className="section-pad relative z-10 bg-ink text-white">
+      <div className="container-page grid gap-6 md:grid-cols-2 md:items-end md:gap-8">
         <div>
           <p className="eyebrow text-white/60">Newsletter</p>
-          <h2 className="section-title mt-3 text-white">
+          <h2 className="section-title mt-2 text-white">
             Recevez les prochaines œuvres et expositions.
           </h2>
         </div>

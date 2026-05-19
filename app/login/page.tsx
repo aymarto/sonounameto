@@ -127,9 +127,9 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-paper px-6 py-16">
+    <main className="flex min-h-screen items-center justify-center bg-paper px-5 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-10 flex flex-col items-center text-center">
+        <div className="mb-8 flex flex-col items-center text-center">
           <Link
             href="/"
             className="font-display text-2xl tracking-wide-xl uppercase"

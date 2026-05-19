@@ -5,6 +5,20 @@
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
+  --ink: #0a0a0a;
+}
+
+/* Header / footer : couleurs immédiates (avant hydratation Tailwind) */
+.site-header {
+  background-color: #0a0a0a;
+  color: #ffffff;
+}
+
+.site-footer {
+  position: relative;
+  z-index: 20;
+  background-color: #0a0a0a;
+  color: #ffffff;
 }
 
 * {
@@ -21,6 +35,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.preloader-active {
+  overflow: hidden;
+}
+
+/* Diaporama hero : fond fixe desktop (équivalent background-attachment: fixed) */
+@media (max-width: 768px) {
+  .hero-slider-bg {
+    position: absolute;
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -28,11 +53,26 @@ a {
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-6 md:px-10;
+    @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+  }
+
+  /* Padding vertical des sections (accueil, previews…) */
+  .section-pad {
+    @apply py-10 md:py-12;
+  }
+
+  /* En-tête des pages intérieures */
+  .page-intro {
+    @apply border-b border-black/10 bg-white py-8 md:py-10;
+  }
+
+  /* Contenu sous page-intro (évite le double grand vide) */
+  .page-content {
+    @apply bg-white pb-10 md:pb-12 pt-6 md:pt-8;
   }
 
   .section-title {
-    @apply font-display text-3xl md:text-5xl tracking-tight;
+    @apply font-display text-3xl md:text-4xl tracking-tight;
   }
 
   .eyebrow {
@@ -48,16 +88,3 @@ a {
   }
 }
 
-.bg-hero-fixed {
-  background-image: url("/images/portrait_0.jpeg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-@media (max-width: 768px) {
-  .bg-hero-fixed {
-    background-attachment: scroll;
-  }
-}

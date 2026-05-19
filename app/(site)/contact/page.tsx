@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ContactForm from "@/components/ContactForm";
+import SocialLinks from "@/components/SocialLinks";
+import { SOCIAL_LINKS } from "@/lib/social";
 
 export const metadata: Metadata = {
   title: "Contact — SONOUNAMETO",
@@ -16,32 +18,21 @@ export default function ContactPage() {
         description="Pour une acquisition, une collaboration, une exposition ou simplement échanger autour du travail."
       />
 
-      <section className="bg-white py-16 md:py-24">
-        <div className="container-page grid gap-12 md:grid-cols-[1fr_1.4fr] md:gap-16">
-          <div className="space-y-8">
+      <section className="page-content">
+        <div className="container-page grid gap-10 md:grid-cols-[1fr_1.4fr] md:gap-12">
+          <div className="space-y-6">
+            <div>
+              <p className="eyebrow">Réseaux & email</p>
+              <SocialLinks variant="page" className="mt-4" />
+            </div>
             <div>
               <p className="eyebrow">Email</p>
               <a
-                href="mailto:contact@sonounameto.art"
+                href={`mailto:${SOCIAL_LINKS.email}`}
                 className="mt-2 block text-lg hover:opacity-70"
               >
-                contact@sonounameto.art
+                {SOCIAL_LINKS.email}
               </a>
-            </div>
-            <div>
-              <p className="eyebrow">Réseaux</p>
-              <ul className="mt-2 space-y-1 text-lg">
-                <li>
-                  <a href="#" className="hover:opacity-70">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:opacity-70">
-                    Facebook
-                  </a>
-                </li>
-              </ul>
             </div>
             <div>
               <p className="eyebrow">Atelier</p>

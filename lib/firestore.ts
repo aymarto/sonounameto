@@ -19,6 +19,8 @@ import {
 import { getFirebase } from "@/lib/firebase";
 import type { Artwork, ArtEvent, HeroSettings } from "@/lib/types";
 import { DEFAULT_HERO } from "@/lib/types";
+import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
+import { isFirebaseConfigured } from "@/lib/firebase";
 
 function db() {
   const fb = getFirebase();
@@ -179,22 +181,29 @@ export async function deleteEvent(id: string): Promise<void> {
 // ---------- Hero settings ----------
 
 export async function getHero(): Promise<HeroSettings> {
-  const ref = doc(db(), "settings", "hero");
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return DEFAULT_HERO;
-  const data = snap.data();
-  return {
-    imageUrl: data.imageUrl ?? DEFAULT_HERO.imageUrl,
-    imagePath: data.imagePath,
-    title: data.title ?? DEFAULT_HERO.title,
-    subtitle: data.subtitle ?? DEFAULT_HERO.subtitle,
-    description: data.description ?? DEFAULT_HERO.description,
-  };
+  if (!isFirebaseConfigured()) {
+    return getLocalHeroFallback();
+  }
+
+  try {
+    const ref = doc(db(), "settings", "hero");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      return getLocalHeroFallback();
+    }
+    return normalizeHeroSettings(snap.data() as Partial<HeroSettings>);
+  } catch {
+    return getLocalHeroFallback();
+  }
 }
 
 export async function setHero(data: HeroSettings): Promise<void> {
+  const normalized = normalizeHeroSettings(data);
   await setDoc(doc(db(), "settings", "hero"), {
-    ...data,
+    slides: normalized.slides,
+    title: normalized.title,
+    subtitle: normalized.subtitle,
+    description: normalized.description,
     updatedAt: serverTimestamp(),
   });
 }

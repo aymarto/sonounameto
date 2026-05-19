@@ -16,8 +16,8 @@ export default function AProposPage() {
         description="Quelques mots sur mon parcours, ma démarche et les thèmes qui traversent mon travail."
       />
 
-      <section className="bg-white py-16 md:py-24">
-        <div className="container-page grid gap-12 md:grid-cols-[1fr_1.2fr] md:gap-16">
+      <section className="page-content">
+        <div className="container-page grid gap-8 md:grid-cols-[1fr_1.2fr] md:gap-10">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <Image
               src="/images/portrait_3.jpeg"
@@ -28,7 +28,7 @@ export default function AProposPage() {
             />
           </div>
 
-          <div className="space-y-6 text-neutral-700 leading-relaxed">
+          <div className="space-y-4 text-neutral-700 leading-relaxed">
             <p>
               Je suis SONOUNAMETO, artiste peintre. Mon travail s&apos;articule
               autour du portrait, du regard et de la mémoire. Chaque toile
@@ -47,7 +47,7 @@ export default function AProposPage() {
               les figures que je peins, à mi-chemin entre intimité et symbole.
             </p>
 
-            <div className="grid grid-cols-2 gap-6 border-t border-black/10 pt-8">
+            <div className="grid grid-cols-2 gap-5 border-t border-black/10 pt-6">
               <div>
                 <p className="eyebrow">Médiums</p>
                 <p className="mt-2 text-sm">Huile, acrylique, fusain</p>

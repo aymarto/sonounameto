@@ -6,12 +6,12 @@ type Props = {
 
 export default function PageHeader({ eyebrow, title, description }: Props) {
   return (
-    <header className="border-b border-black/10 bg-white py-16 md:py-24">
+    <header className="page-intro">
       <div className="container-page">
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1 className="section-title mt-3 max-w-3xl">{title}</h1>
+        <h1 className="section-title mt-2 max-w-3xl">{title}</h1>
         {description && (
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-neutral-600 md:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-neutral-600">
             {description}
           </p>
         )}

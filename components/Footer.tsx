@@ -1,11 +1,13 @@
 import Link from "next/link";
+import SocialLinks from "@/components/SocialLinks";
+import { SOCIAL_LINKS } from "@/lib/social";
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/10 bg-ink text-white">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-4">
+    <footer className="site-footer relative z-20 border-t border-white/10 bg-ink text-white">
+      <div className="container-page grid gap-8 py-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <Link
             href="/"
@@ -13,14 +15,15 @@ export default function Footer() {
           >
             SONOUNAMETO
           </Link>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-400">
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-neutral-400">
             Galerie officielle de l&apos;artiste. Portraits, expositions et
             collaborations.
           </p>
+          <SocialLinks variant="footer" className="mt-6" />
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-wide-xl text-neutral-500 mb-4">
+          <p className="mb-3 text-xs uppercase tracking-wide-xl text-neutral-500">
             Navigation
           </p>
           <ul className="space-y-2 text-sm text-neutral-400">
@@ -48,34 +51,23 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-xs uppercase tracking-wide-xl text-neutral-500 mb-4">
-            Suivre
+          <p className="mb-3 text-xs uppercase tracking-wide-xl text-neutral-500">
+            Contact
           </p>
-          <ul className="space-y-2 text-sm text-neutral-400">
-            <li>
-              <a href="#" className="hover:text-white">
-                Instagram
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white">
-                Facebook
-              </a>
-            </li>
-            <li>
-              <a
-                href="mailto:contact@sonounameto.art"
-                className="hover:text-white"
-              >
-                contact@sonounameto.art
-              </a>
-            </li>
-          </ul>
+          <a
+            href={`mailto:${SOCIAL_LINKS.email}`}
+            className="text-sm text-neutral-400 transition-colors hover:text-white"
+          >
+            {SOCIAL_LINKS.email}
+          </a>
+          <p className="mt-4 text-sm text-neutral-500">
+            Lomé — sur rendez-vous
+          </p>
         </div>
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-page flex flex-col items-start justify-between gap-3 py-6 text-xs text-neutral-500 md:flex-row md:items-center">
+        <div className="container-page flex flex-col items-start justify-between gap-2 py-4 text-xs text-neutral-500 md:flex-row md:items-center">
           <p>© {year} SONOUNAMETO — Tous droits réservés.</p>
           <Link
             href="/admin"

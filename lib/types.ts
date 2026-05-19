@@ -9,10 +9,9 @@ export type Artwork = {
   title: string;
   shortDescription: string;
   description: string;
-  date: string; // ISO date string (YYYY-MM-DD)
+  date: string;
   imageUrl: string;
   imagePath?: string;
-  /** Images supplémentaires (vues, détails, série…) */
   galleryImages?: ArtworkImage[];
   medium?: string;
   dimensions?: string;
@@ -34,16 +33,29 @@ export type ArtEvent = {
   updatedAt?: string;
 };
 
-export type HeroSettings = {
+export type HeroSlide = {
   imageUrl: string;
   imagePath?: string;
+};
+
+export type HeroSettings = {
+  slides: HeroSlide[];
   title: string;
   subtitle: string;
   description: string;
+  /** @deprecated Ancien format — migré vers slides */
+  imageUrl?: string;
+  imagePath?: string;
 };
 
+export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
+  { imageUrl: "/images/portrait_0.jpeg" },
+  { imageUrl: "/images/portrait_1.jpeg" },
+  { imageUrl: "/images/portrait_2.jpeg" },
+];
+
 export const DEFAULT_HERO: HeroSettings = {
-  imageUrl: "/images/portrait_0.jpeg",
+  slides: DEFAULT_HERO_SLIDES,
   title: "SONOUNAMETO",
   subtitle: "Portraits & expositions",
   description:

@@ -18,5 +18,6 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function ArtworkPage({ params }: Props) {
-  return <ArtworkDetail id={params.id} />;
+  const initialArtwork = getStaticArtwork(params.id) ?? null;
+  return <ArtworkDetail id={params.id} initialArtwork={initialArtwork} />;
 }

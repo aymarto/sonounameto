@@ -21,8 +21,8 @@ export default function GaleriePage() {
         description="Une sélection d'œuvres : portraits, séries et études. Cliquez sur une œuvre pour voir le détail et toutes les images."
       />
 
-      <section className="bg-white py-16 md:py-24">
-        <div className="container-page grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="page-content">
+        <div className="container-page grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {artworks.map((art) => (
             <Link
               key={art.id}
@@ -35,8 +35,10 @@ export default function GaleriePage() {
                     src={art.imageUrl}
                     alt={art.title}
                     fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 50vw"
+                  quality={70}
+                  loading="lazy"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                   {hasMultipleImages(art) && (
                     <span className="absolute bottom-3 right-3 bg-black/70 px-2 py-1 text-[10px] uppercase tracking-wide-xl text-white">
@@ -44,7 +46,7 @@ export default function GaleriePage() {
                     </span>
                   )}
                 </div>
-                <div className="mt-5">
+                <div className="mt-3">
                   <div className="flex items-baseline justify-between gap-4">
                     <h2 className="font-display text-2xl leading-tight group-hover:opacity-70">
                       {art.title}

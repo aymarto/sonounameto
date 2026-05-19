@@ -17,12 +17,12 @@ export default function AdminHeader({
   action,
 }: Props) {
   return (
-    <header className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-black/10 pb-6">
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-black/10 pb-4">
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h1 className="mt-2 font-display text-3xl md:text-4xl">{title}</h1>
         {description && (
-          <p className="mt-3 max-w-2xl text-sm text-neutral-600">
+          <p className="mt-2 max-w-2xl text-sm text-neutral-600">
             {description}
           </p>
         )}
