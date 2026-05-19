@@ -23,12 +23,12 @@ export default function WorksPreview() {
           {preview.map((art) => (
             <Link
               key={art.id}
-              href={`/galerie#${art.id}`}
+              href={`/galerie/${art.id}`}
               className="group block"
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
                 <Image
-                  src={art.image}
+                  src={art.imageUrl}
                   alt={art.title}
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"

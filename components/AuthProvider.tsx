@@ -13,7 +13,8 @@ import {
   signOut as fbSignOut,
   type User,
 } from "firebase/auth";
-import { getFirebase, isFirebaseConfigured } from "@/lib/firebase";
+import { getFirebase, setRuntimeFirebaseConfig } from "@/lib/firebase";
+import { resolveFirebaseConfig } from "@/lib/firebase-config";
 
 type AuthContextValue = {
   user: User | null;
@@ -34,24 +35,26 @@ const AuthContext = createContext<AuthContextValue>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const firebaseReady = isFirebaseConfigured();
+  const [firebaseReady, setFirebaseReady] = useState(true);
 
   useEffect(() => {
-    if (!firebaseReady) {
-      setLoading(false);
-      return;
-    }
+    // Valeurs build (.env / GitHub secrets) ou DEFAULT_FIREBASE_CONFIG en secours
+    setRuntimeFirebaseConfig(resolveFirebaseConfig());
+
     const fb = getFirebase();
     if (!fb) {
+      setFirebaseReady(false);
       setLoading(false);
       return;
     }
+
     const unsub = onAuthStateChanged(fb.auth, (u) => {
       setUser(u);
       setLoading(false);
     });
+
     return () => unsub();
-  }, [firebaseReady]);
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({

@@ -29,10 +29,10 @@ export default function EvenementsPage() {
                 i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
-              {ev.image && (
+              {ev.imageUrl && (
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
                   <Image
-                    src={ev.image}
+                    src={ev.imageUrl}
                     alt={ev.title}
                     fill
                     sizes="(min-width: 768px) 50vw, 100vw"

@@ -1,3 +1,9 @@
+export type ArtworkImage = {
+  url: string;
+  path?: string;
+  alt?: string;
+};
+
 export type Artwork = {
   id: string;
   title: string;
@@ -5,7 +11,9 @@ export type Artwork = {
   description: string;
   date: string; // ISO date string (YYYY-MM-DD)
   imageUrl: string;
-  imagePath?: string; // Firebase Storage path, for deletion
+  imagePath?: string;
+  /** Images supplémentaires (vues, détails, série…) */
+  galleryImages?: ArtworkImage[];
   medium?: string;
   dimensions?: string;
   order?: number;
@@ -17,7 +25,7 @@ export type ArtEvent = {
   id: string;
   title: string;
   location: string;
-  startDate: string; // ISO date
+  startDate: string;
   endDate?: string;
   description: string;
   imageUrl?: string;

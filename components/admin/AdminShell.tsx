@@ -39,15 +39,31 @@ export default function AdminShell({
     }
   }, [user, loading, firebaseReady, pathname, router]);
 
+  if (loading && !firebaseReady) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-paper">
+        <p className="text-xs uppercase tracking-wide-xl text-neutral-500">
+          Chargement…
+        </p>
+      </main>
+    );
+  }
+
   if (!firebaseReady) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-paper px-6">
         <div className="max-w-md border border-black/10 bg-white p-8 text-sm">
           <p className="eyebrow mb-3">Configuration requise</p>
           <p className="text-neutral-700">
-            Firebase n&apos;est pas encore configuré. Ajoute les variables dans{" "}
-            <code className="bg-neutral-100 px-1">.env.local</code> et redémarre
-            le serveur. Voir le README.
+            Les variables Firebase ne sont pas lues par le serveur. Dans cPanel →
+            Setup Node.js App → Environment variables, vérifie les{" "}
+            <code className="bg-neutral-100 px-1">NEXT_PUBLIC_FIREBASE_*</code>
+            , puis clique sur <strong>Restart</strong>.
+          </p>
+          <p className="mt-3 text-neutral-600 text-xs">
+            Test : ouvre{" "}
+            <code className="bg-neutral-100 px-1">/api/firebase-config</code>{" "}
+            — tu dois voir <code>configured: true</code>.
           </p>
           <Link href="/" className="btn-line mt-6">
             Retour au site

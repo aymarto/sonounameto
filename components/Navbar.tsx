@@ -11,16 +11,21 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+const linkClass = (active: boolean) =>
+  `relative pb-1 transition-colors ${
+    active
+      ? "text-white after:absolute after:-bottom-0 after:left-0 after:h-px after:w-full after:bg-white"
+      : "text-neutral-400 hover:text-white"
+  }`;
+
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -29,13 +34,12 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-ink text-white">
       <div className="container-page flex h-16 items-center md:h-20">
-        {/* Mobile: logo left, button right. Desktop: logo centered, links underneath/around */}
         <div className="flex w-full items-center justify-between md:hidden">
           <Link
             href="/"
-            className="font-display text-xl tracking-wide-xl uppercase"
+            className="font-display text-xl tracking-wide-xl uppercase text-white"
           >
             SONOUNAMETO
           </Link>
@@ -49,12 +53,12 @@ export default function Navbar() {
             <span className="sr-only">Menu</span>
             <div className="relative h-3 w-6">
               <span
-                className={`absolute left-0 top-0 block h-px w-6 bg-black transition-transform ${
+                className={`absolute left-0 top-0 block h-px w-6 bg-white transition-transform ${
                   open ? "translate-y-[6px] rotate-45" : ""
                 }`}
               />
               <span
-                className={`absolute left-0 top-[12px] block h-px w-6 bg-black transition-transform ${
+                className={`absolute left-0 top-[12px] block h-px w-6 bg-white transition-transform ${
                   open ? "-translate-y-[6px] -rotate-45" : ""
                 }`}
               />
@@ -62,18 +66,13 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Desktop layout: links on both sides, logo centered */}
         <nav className="hidden w-full grid-cols-3 items-center md:grid">
           <ul className="flex items-center gap-8 text-xs uppercase tracking-wide-xl">
             {NAV_LINKS.slice(0, 2).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`relative pb-1 transition-colors hover:text-black ${
-                    pathname === link.href
-                      ? "text-black after:absolute after:-bottom-0 after:left-0 after:h-px after:w-full after:bg-black"
-                      : "text-neutral-600"
-                  }`}
+                  className={linkClass(pathname === link.href)}
                 >
                   {link.label}
                 </Link>
@@ -84,7 +83,7 @@ export default function Navbar() {
           <div className="flex justify-center">
             <Link
               href="/"
-              className="font-display text-2xl tracking-wide-xl uppercase"
+              className="font-display text-2xl tracking-wide-xl uppercase text-white"
             >
               SONOUNAMETO
             </Link>
@@ -95,11 +94,7 @@ export default function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`relative pb-1 transition-colors hover:text-black ${
-                    pathname === link.href
-                      ? "text-black after:absolute after:-bottom-0 after:left-0 after:h-px after:w-full after:bg-black"
-                      : "text-neutral-600"
-                  }`}
+                  className={linkClass(pathname === link.href)}
                 >
                   {link.label}
                 </Link>
@@ -109,9 +104,8 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* Mobile slide-down menu */}
       <div
-        className={`md:hidden overflow-hidden border-t border-black/10 bg-white transition-[max-height,opacity] duration-300 ease-in-out ${
+        className={`md:hidden overflow-hidden border-t border-white/10 bg-ink transition-[max-height,opacity] duration-300 ease-in-out ${
           open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -121,7 +115,7 @@ export default function Navbar() {
               <Link
                 href={link.href}
                 className={`block py-3 text-sm uppercase tracking-wide-xl ${
-                  pathname === link.href ? "text-black" : "text-neutral-600"
+                  pathname === link.href ? "text-white" : "text-neutral-400"
                 }`}
               >
                 {link.label}

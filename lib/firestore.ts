@@ -36,6 +36,17 @@ function toISO(value: unknown): string | undefined {
   return undefined;
 }
 
+function mapGalleryImages(data: DocumentData): Artwork["galleryImages"] {
+  if (!Array.isArray(data.galleryImages)) return [];
+  return data.galleryImages
+    .filter((item) => item && typeof item.url === "string")
+    .map((item) => ({
+      url: item.url as string,
+      path: typeof item.path === "string" ? item.path : undefined,
+      alt: typeof item.alt === "string" ? item.alt : undefined,
+    }));
+}
+
 function mapArtwork(id: string, data: DocumentData): Artwork {
   return {
     id,
@@ -45,6 +56,7 @@ function mapArtwork(id: string, data: DocumentData): Artwork {
     date: data.date ?? "",
     imageUrl: data.imageUrl ?? "",
     imagePath: data.imagePath,
+    galleryImages: mapGalleryImages(data),
     medium: data.medium,
     dimensions: data.dimensions,
     order: data.order,

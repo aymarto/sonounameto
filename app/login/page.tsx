@@ -47,15 +47,27 @@ function LoginForm() {
     }
   }
 
+  if (loading && !firebaseReady) {
+    return (
+      <div className="border border-black/10 bg-white p-8 text-sm text-neutral-500">
+        Chargement de la configuration…
+      </div>
+    );
+  }
+
   if (!firebaseReady) {
     return (
       <div className="border border-black/20 bg-white p-6 text-sm">
-        <p className="eyebrow mb-3">Firebase n&apos;est pas configuré</p>
+        <p className="eyebrow mb-3">Firebase non détecté</p>
         <p className="text-neutral-700">
-          Renseigne les variables d&apos;environnement dans{" "}
-          <code className="bg-neutral-100 px-1">.env.local</code> puis redémarre
-          le serveur de développement. Voir le{" "}
-          <code className="bg-neutral-100 px-1">README.md</code>.
+          En production, ajoute les variables{" "}
+          <code className="bg-neutral-100 px-1">NEXT_PUBLIC_FIREBASE_*</code>{" "}
+          dans cPanel → Setup Node.js App → Environment variables, puis{" "}
+          <strong>Restart</strong> l&apos;application.
+        </p>
+        <p className="mt-3 text-neutral-600">
+          En local : fichier{" "}
+          <code className="bg-neutral-100 px-1">.env.local</code>.
         </p>
       </div>
     );

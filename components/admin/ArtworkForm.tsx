@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import GalleryImagesUploader from "@/components/admin/GalleryImagesUploader";
 import ImageUploader from "@/components/admin/ImageUploader";
 import {
   createArtwork,
@@ -9,7 +10,7 @@ import {
   updateArtwork,
 } from "@/lib/firestore";
 import { deleteImage } from "@/lib/storage";
-import type { Artwork } from "@/lib/types";
+import type { Artwork, ArtworkImage } from "@/lib/types";
 
 type Props = {
   initial?: Artwork;
@@ -31,6 +32,9 @@ export default function ArtworkForm({ initial }: Props) {
     initial?.imageUrl
       ? { url: initial.imageUrl, path: initial.imagePath }
       : null
+  );
+  const [galleryImages, setGalleryImages] = useState<ArtworkImage[]>(
+    initial?.galleryImages ?? []
   );
 
   const [saving, setSaving] = useState(false);
@@ -57,6 +61,7 @@ export default function ArtworkForm({ initial }: Props) {
         dimensions: dimensions.trim() || undefined,
         imageUrl: image.url,
         imagePath: image.path,
+        galleryImages: galleryImages.filter((img) => img.url !== image.url),
       };
 
       if (isEdit && initial) {
@@ -83,6 +88,9 @@ export default function ArtworkForm({ initial }: Props) {
       if (initial.imagePath) {
         deleteImage(initial.imagePath).catch(() => {});
       }
+      for (const img of initial.galleryImages ?? []) {
+        if (img.path) deleteImage(img.path).catch(() => {});
+      }
       router.push("/admin/galerie");
       router.refresh();
     } catch (err) {
@@ -94,13 +102,19 @@ export default function ArtworkForm({ initial }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
-      <ImageUploader
-        folder="artworks"
-        value={image ?? undefined}
-        onChange={setImage}
-        label="Image principale"
-        aspect="portrait"
-      />
+      <div className="space-y-8">
+        <ImageUploader
+          folder="artworks"
+          value={image ?? undefined}
+          onChange={setImage}
+          label="Image principale"
+          aspect="portrait"
+        />
+        <GalleryImagesUploader
+          images={galleryImages}
+          onChange={setGalleryImages}
+        />
+      </div>
 
       <div className="space-y-6">
         <div>
