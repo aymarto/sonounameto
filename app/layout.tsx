@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
+import DeployVersionCheck from "@/components/DeployVersionCheck";
 import "./globals.css";
+
+const buildId = process.env.NEXT_PUBLIC_BUILD_ID ?? "dev";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -35,6 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans bg-white text-ink">
+        <DeployVersionCheck />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

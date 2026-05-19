@@ -37,6 +37,9 @@ jobs:
       - name: Type checking
         run: npm run type-check || echo "Type check warnings (continuing...)"
 
+      - name: Write build version (cache bust)
+        run: node scripts/write-version.js
+
       - name: Build for production
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
@@ -69,7 +72,7 @@ jobs:
           password: ${{ secrets.CPANEL_PWD }}
           local_dir: ./deploy
           remote_dir: ${{ env.REMOTE_DIR }}
-          delete: "false"
+          delete: "true"
           max_retries: "3"
           ftp_ssl_allow: "false"
           ftp_use_feat: "true"

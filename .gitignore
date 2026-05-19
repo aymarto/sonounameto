@@ -15,6 +15,9 @@
 /deploy
 /out
 
+# généré à chaque build (cache bust)
+/public/version.json
+
 # misc
 .DS_Store
 *.pem

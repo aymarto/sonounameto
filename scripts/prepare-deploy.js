@@ -68,6 +68,14 @@ if (fs.existsSync(publicSrc)) {
   console.log("  ✓ public/");
 }
 
+// version.json (cache bust côté client)
+const versionSrc = path.join(root, "public", "version.json");
+if (fs.existsSync(versionSrc)) {
+  fs.mkdirSync(path.join(deployDir, "public"), { recursive: true });
+  fs.copyFileSync(versionSrc, path.join(deployDir, "public", "version.json"));
+  console.log("  ✓ public/version.json");
+}
+
 // package-lock.json pour un npm install reproductible sur cPanel
 const pkgPath = path.join(deployDir, "package.json");
 if (fs.existsSync(pkgPath)) {
