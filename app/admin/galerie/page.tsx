@@ -37,7 +37,7 @@ export default function AdminGaleriePage() {
           {artworks.map((art) => (
             <li key={art.id}>
               <Link
-                href={`/admin/galerie/${art.id}`}
+                href={`/admin/galerie/edit?id=${art.id}`}
                 className="group block border border-black/10 bg-white transition-colors hover:bg-neutral-50"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100">

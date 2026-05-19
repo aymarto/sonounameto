@@ -8,7 +8,8 @@ on:
 env:
   NODE_VERSION: "18"
   DOMAIN: sonounameto.aymart.bj
-  REMOTE_DIR: /sonounameto.aymart.bj
+  # Le compte FTP est déjà chrooté dans le dossier du site → racine "/"
+  REMOTE_DIR: /
 
 jobs:
   deploy-production:
@@ -48,10 +49,17 @@ jobs:
 
       - name: Verify deployment files
         run: |
-          echo "Contenu du dossier deploy :"
-          ls -la deploy/
-          echo "Taille :"
+          echo "=== Contenu deploy/ (racine) ==="
+          ls -la deploy/ | head -30
+          echo ""
+          echo "=== Taille ==="
           du -sh deploy/
+          echo ""
+          if [ -d "deploy/node_modules" ]; then
+            echo "❌ ERREUR : node_modules présent dans deploy/"
+            exit 1
+          fi
+          echo "✓ Aucun node_modules — OK pour FTP"
 
       - name: Deploy to cPanel via FTP
         uses: airvzxf/ftp-deployment-action@latest
@@ -68,4 +76,10 @@ jobs:
 
       - name: Deployment success
         run: |
-          echo "Déploiement terminé : https://${{ env.DOMAIN }}"
+          echo "Déploiement FTP terminé : https://${{ env.DOMAIN }}"
+          echo ""
+          echo "Étape manuelle sur cPanel (après chaque déploiement) :"
+          echo "  1. Setup Node.js App → Run NPM Install"
+          echo "  2. Restart l'application (startup: server.js)"
+          echo ""
+          echo "node_modules n'est PAS envoyé par FTP — il est créé sur le serveur."

@@ -13,6 +13,7 @@
 # production
 /build
 /deploy
+/out
 
 # misc
 .DS_Store

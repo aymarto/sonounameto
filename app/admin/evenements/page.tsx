@@ -50,7 +50,7 @@ export default function AdminEventsPage() {
           {events.map((ev) => (
             <li key={ev.id}>
               <Link
-                href={`/admin/evenements/${ev.id}`}
+                href={`/admin/evenements/edit?id=${ev.id}`}
                 className="grid items-center gap-2 px-4 py-5 transition-colors hover:bg-neutral-50 md:grid-cols-[180px_1fr_auto] md:gap-8 md:px-6"
               >
                 <p className="text-xs uppercase tracking-wide-xl text-neutral-500">

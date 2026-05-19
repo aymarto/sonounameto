@@ -1,84 +1,52 @@
 # Déploiement — sonounameto.aymart.bj
 
-Déploiement automatique via **GitHub Actions** + **FTP** vers cPanel (même principe que `me.aymart.bj`).
+Mode **Next.js standalone** : le build tourne sur GitHub Actions, le FTP n'envoie **pas** `node_modules`.
 
-## 1. Branche `production`
+## Compte FTP
 
-Le workflow se déclenche sur un push vers la branche **`production`** (ou manuellement : *Actions → Deploy SONOUNAMETO → Run workflow*).
+Le compte FTP ouvre **directement** le dossier du site. Le workflow utilise `REMOTE_DIR: /` (pas de sous-dossier créé).
 
-```bash
-git checkout -b production
-git push -u origin production
-```
+## Workflow
 
-## 2. Secrets GitHub
+1. Push sur `production` → build → dossier `deploy/`
+2. FTP : `server.js`, `.next/`, `public/`, `package.json`, `package-lock.json` (sans `node_modules`)
+3. **Sur cPanel** : Run NPM Install + Restart
 
-Dans le dépôt : **Settings → Secrets and variables → Actions → New repository secret**
+## Secrets GitHub
 
-### FTP cPanel (compte dédié `sonounameto`)
+| Secret | Description |
+|--------|-------------|
+| `CPANEL_SERVER` | Hôte FTP |
+| `CPANEL_USER` | Utilisateur FTP |
+| `CPANEL_PWD` | Mot de passe |
+| `NEXT_PUBLIC_FIREBASE_*` | 6 variables (build) |
 
-| Secret | Exemple | Description |
-|--------|---------|-------------|
-| `CPANEL_SERVER` | `ftp.aymart.bj` ou IP | Hôte FTP |
-| `CPANEL_USER` | utilisateur FTP sonounameto | Login FTP |
-| `CPANEL_PWD` | •••••• | Mot de passe FTP |
+## cPanel — après chaque déploiement
 
-Le dossier distant cible est **`/sonounameto.aymart.bj`** (défini dans le workflow). Si ton FTP ouvre déjà directement ce répertoire à la connexion, adapte `REMOTE_DIR` dans `.github/workflows/deploy-production.yml` (par ex. `/`).
+1. **Setup Node.js App**
+   - Racine : dossier du site (là où arrivent les fichiers FTP)
+   - **Startup file** : `server.js` ou `app.js`
+   - Node **18+**
+2. **Run NPM Install** — installe les dépendances à partir de `package.json` (équivalent du `node_modules` standalone, mais sur le serveur)
+3. **Restart** l'application
 
-### Firebase (obligatoire au build)
+Voir aussi `CPANEL-INSTALL.txt` dans le dossier déployé.
 
-Les variables `NEXT_PUBLIC_*` doivent être dans les secrets pour être incluses dans le build :
+## Pourquoi pas de node_modules en FTP ?
 
-- `NEXT_PUBLIC_FIREBASE_API_KEY`
-- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
-- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
-- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
-- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
-- `NEXT_PUBLIC_FIREBASE_APP_ID`
+- Upload beaucoup plus rapide (des centaines de Mo en moins)
+- Évite d'envoyer par erreur le `node_modules` de développement (caniuse-lite, etc.)
+- Le `package.json` généré par Next standalone liste uniquement les paquets nécessaires en production
 
-(Copier les mêmes valeurs que dans `.env.local`.)
-
-## 3. cPanel — application Node.js
-
-Après le premier déploiement FTP :
-
-1. **cPanel → Setup Node.js App** (ou *Application Manager*)
-2. Créer une app :
-   - **Node.js version** : 18.x (ou 20.x si dispo)
-   - **Application root** : le dossier du site (`sonounameto.aymart.bj`)
-   - **Application URL** : domaine `sonounameto.aymart.bj`
-   - **Application startup file** : `server.js` ou `app.js`
-3. Variables d’environnement (optionnel côté serveur si déjà dans le build) :
-   - `NODE_ENV=production`
-   - `PORT` (souvent fourni par cPanel)
-4. **Run NPM Install** n’est en général **pas** nécessaire : le build standalone embarque les dépendances minimales.
-5. Démarrer / redémarrer l’application après chaque déploiement.
-
-### Fichiers déployés
-
-Le dossier `deploy/` contient notamment :
-
-- `server.js` — serveur Next.js standalone
-- `app.js` — point d’entrée alternatif pour cPanel
-- `start.sh` — script shell de démarrage
-- `.next/` — build
-- `public/` — assets statiques
-
-## 4. Test en local avant push
+## Test local
 
 ```bash
 npm run build:simple
 cd deploy
-set NODE_ENV=production
+npm install --omit=dev
 node server.js
 ```
 
-Ouvrir http://localhost:3000
+## Nettoyer un ancien déploiement
 
-## 5. Domaine
-
-Le workflow utilise **`sonounameto.aymart.bj`**. Si ton domaine est différent (ex. `sonounameto.aymat.bj`), modifie `DOMAIN` et `REMOTE_DIR` dans `.github/workflows/deploy-production.yml`.
-
-## 6. HTTPS / proxy
-
-Si le site est derrière Apache (cPanel), vérifie que le proxy vers le port Node est actif (souvent automatique avec *Setup Node.js App*). Sinon, contacte l’hébergeur pour lier le sous-domaine à l’app Node.
+Si `node_modules` a été uploadé par erreur sur le serveur, supprime-le en FTP puis refais **Run NPM Install** sur cPanel.
