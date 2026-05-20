@@ -3,18 +3,30 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Preloader from "@/components/Preloader";
-import { HERO_PRELOAD_URLS, preloadImages } from "@/lib/preload";
+import {
+  getCriticalImageUrls,
+  HERO_PRELOAD_URLS,
+  preloadImages,
+} from "@/lib/preload";
 
-const MIN_DISPLAY_MS = 600;
-const MAX_WAIT_MS = 12000;
+const SESSION_KEY = "nounameto-site-ready";
+/** Délai max absolu — la page s’affiche toujours après ce délai */
+const FAILSAFE_MS = 3000;
 
-function waitForWindowLoad(): Promise<void> {
-  if (document.readyState === "complete") {
-    return Promise.resolve();
+function isSessionReady(): boolean {
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === "1";
+  } catch {
+    return false;
   }
-  return new Promise((resolve) => {
-    window.addEventListener("load", () => resolve(), { once: true });
-  });
+}
+
+function markSessionReady(): void {
+  try {
+    sessionStorage.setItem(SESSION_KEY, "1");
+  } catch {
+    /* ignore */
+  }
 }
 
 export default function SiteReadyGate({
@@ -27,48 +39,43 @@ export default function SiteReadyGate({
   const [showPreloader, setShowPreloader] = useState(true);
 
   useEffect(() => {
-    let cancelled = false;
+    if (isSessionReady()) {
+      setReady(true);
+      setShowPreloader(false);
+      document.body.classList.remove("preloader-active");
+      return;
+    }
+
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      setReady(true);
+      document.body.classList.remove("preloader-active");
+      markSessionReady();
+      window.setTimeout(() => setShowPreloader(false), 400);
+    };
 
     document.body.classList.add("preloader-active");
 
-    const run = async () => {
-      const minDelay = new Promise<void>((r) =>
-        setTimeout(r, MIN_DISPLAY_MS)
-      );
-      const fontsReady = document.fonts?.ready ?? Promise.resolve();
-      const windowLoad = waitForWindowLoad();
+    const failSafe = window.setTimeout(finish, FAILSAFE_MS);
 
-      const criticalImages =
-        pathname === "/"
-          ? preloadImages(HERO_PRELOAD_URLS)
-          : Promise.resolve();
+    const criticalUrls =
+      pathname === "/"
+        ? [...HERO_PRELOAD_URLS, "/images/portrait_3_1.jpeg"]
+        : getCriticalImageUrls(pathname).slice(0, 4);
 
-      const timeout = new Promise<void>((resolve) =>
-        setTimeout(resolve, MAX_WAIT_MS)
-      );
-
-      await Promise.race([
-        Promise.all([minDelay, fontsReady, windowLoad, criticalImages]),
-        timeout,
-      ]);
-
-      if (cancelled) return;
-
-      setReady(true);
-      document.body.classList.remove("preloader-active");
-
-      setTimeout(() => {
-        if (!cancelled) setShowPreloader(false);
-      }, 750);
-    };
-
-    run();
+    void Promise.all([
+      document.fonts?.ready ?? Promise.resolve(),
+      preloadImages(criticalUrls),
+    ]).then(finish);
 
     return () => {
-      cancelled = true;
+      window.clearTimeout(failSafe);
       document.body.classList.remove("preloader-active");
     };
-    // Premier chargement uniquement (pas à chaque changement de page)
+    // Une seule passe au montage (évite blocage React Strict Mode + re-navigations)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,9 +84,11 @@ export default function SiteReadyGate({
       {showPreloader && <Preloader visible={!ready} />}
 
       <div
-        className={`transition-opacity duration-700 ease-out ${
-          ready ? "opacity-100" : "opacity-0"
-        }`}
+        className={
+          ready
+            ? "opacity-100 transition-opacity duration-500 ease-out"
+            : "pointer-events-none opacity-0 select-none"
+        }
         aria-hidden={!ready}
       >
         {children}

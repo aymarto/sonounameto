@@ -1,3 +1,5 @@
+import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+
 export type ArtworkImage = {
   url: string;
   path?: string;
@@ -56,8 +58,8 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
 
 export const DEFAULT_HERO: HeroSettings = {
   slides: DEFAULT_HERO_SLIDES,
-  title: "SONOUNAMETO",
-  subtitle: "Portraits & expositions",
+  title: GALLERY_NAME,
+  subtitle: ARTIST_NAME,
   description:
     "Une exploration des visages, du silence et de la lumière. Découvrez les œuvres et les évènements à venir.",
 };

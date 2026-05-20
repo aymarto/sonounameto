@@ -1,5 +1,7 @@
 import Link from "next/link";
 import SocialLinks from "@/components/SocialLinks";
+import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import { NAV_LINKS } from "@/lib/navigation";
 import { SOCIAL_LINKS } from "@/lib/social";
 
 export default function Footer() {
@@ -11,12 +13,12 @@ export default function Footer() {
         <div className="md:col-span-2">
           <Link
             href="/"
-            className="font-display text-2xl tracking-wide-xl uppercase text-white"
+            className="whitespace-nowrap font-display text-2xl tracking-wide-xl uppercase text-white"
           >
-            SONOUNAMETO
+            {GALLERY_NAME}
           </Link>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-neutral-400">
-            Galerie officielle de l&apos;artiste. Portraits, expositions et
+            Galerie de l&apos;artiste {ARTIST_NAME}. Portraits, expositions et
             collaborations.
           </p>
           <SocialLinks variant="footer" className="mt-6" />
@@ -27,26 +29,13 @@ export default function Footer() {
             Navigation
           </p>
           <ul className="space-y-2 text-sm text-neutral-400">
-            <li>
-              <Link href="/galerie" className="hover:text-white">
-                Ma galerie
-              </Link>
-            </li>
-            <li>
-              <Link href="/evenements" className="hover:text-white">
-                Mes évènements
-              </Link>
-            </li>
-            <li>
-              <Link href="/a-propos" className="hover:text-white">
-                À propos de moi
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-white">
-                Contact
-              </Link>
-            </li>
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -68,7 +57,9 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-start justify-between gap-2 py-4 text-xs text-neutral-500 md:flex-row md:items-center">
-          <p>© {year} SONOUNAMETO — Tous droits réservés.</p>
+          <p>
+            © {year} {GALLERY_NAME} — {ARTIST_NAME}. Tous droits réservés.
+          </p>
           <Link
             href="/admin"
             className="uppercase tracking-wide-xl text-neutral-500 hover:text-white"

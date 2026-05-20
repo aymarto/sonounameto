@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
 import ContactForm from "@/components/ContactForm";
 import SocialLinks from "@/components/SocialLinks";
+import { ARTIST_NAME, pageTitle } from "@/lib/brand";
 import { SOCIAL_LINKS } from "@/lib/social";
 
 export const metadata: Metadata = {
-  title: "Contact — SONOUNAMETO",
-  description: "Contactez l'artiste SONOUNAMETO.",
+  title: pageTitle("Contact"),
+  description: `Contactez ${ARTIST_NAME}.`,
 };
 
 export default function ContactPage() {

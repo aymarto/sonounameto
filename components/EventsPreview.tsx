@@ -9,14 +9,14 @@ export default function EventsPreview() {
         <div className="flex items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Agenda</p>
-            <h2 className="section-title mt-2">Évènements à venir</h2>
+            <h2 className="section-title mt-2">Expositions & évènements</h2>
           </div>
           <Link href="/evenements" className="btn-line hidden md:inline-flex">
-            Tous les évènements
+            Voir tout
           </Link>
         </div>
 
-        <ul className="mt-12 divide-y divide-black/10 border-y border-black/10">
+        <ul className="mt-8 divide-y divide-black/10 border-y border-black/10">
           {events.map((ev) => (
             <li
               key={ev.id}
@@ -43,7 +43,7 @@ export default function EventsPreview() {
 
         <div className="mt-6 md:hidden">
           <Link href="/evenements" className="btn-line">
-            Tous les évènements
+            Voir tout
           </Link>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import AdminShell from "@/components/admin/AdminShell";
+import { pageTitle } from "@/lib/brand";
 
 export const metadata = {
-  title: "Admin — SONOUNAMETO",
+  title: pageTitle("Admin"),
   robots: { index: false, follow: false },
 };
 

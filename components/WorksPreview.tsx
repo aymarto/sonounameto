@@ -14,16 +14,16 @@ export default function WorksPreview() {
             <p className="eyebrow">Quelques œuvres</p>
             <h2 className="section-title mt-2">Sélection récente</h2>
           </div>
-          <Link href="/galerie" className="btn-line hidden md:inline-flex">
+          <Link href="/oeuvres" className="btn-line hidden md:inline-flex">
             Voir tout
           </Link>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {preview.map((art) => (
+        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
+          {preview.map((art, index) => (
             <Link
               key={art.id}
-              href={`/galerie/${art.id}`}
+              href={`/oeuvres/${art.id}`}
               className="group block"
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
@@ -33,7 +33,8 @@ export default function WorksPreview() {
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 50vw"
                   quality={70}
-                  loading="lazy"
+                  priority={index < 4}
+                  loading={index < 4 ? "eager" : "lazy"}
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               </div>
@@ -50,7 +51,7 @@ export default function WorksPreview() {
         </div>
 
         <div className="mt-8 md:hidden">
-          <Link href="/galerie" className="btn-line">
+          <Link href="/oeuvres" className="btn-line">
             Voir tout
           </Link>
         </div>

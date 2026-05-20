@@ -1,10 +1,11 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import { ARTIST_NAME, pageTitle } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "À propos — SONOUNAMETO",
-  description: "Biographie et démarche artistique de SONOUNAMETO.",
+  title: pageTitle("À propos"),
+  description: `Biographie et démarche artistique de ${ARTIST_NAME}.`,
 };
 
 export default function AProposPage() {
@@ -21,7 +22,7 @@ export default function AProposPage() {
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <Image
               src="/images/portrait_3.jpeg"
-              alt="Portrait de SONOUNAMETO"
+              alt={`Portrait de ${ARTIST_NAME}`}
               fill
               sizes="(min-width: 768px) 40vw, 100vw"
               className="object-cover grayscale"
@@ -30,7 +31,7 @@ export default function AProposPage() {
 
           <div className="space-y-4 text-neutral-700 leading-relaxed">
             <p>
-              Je suis SONOUNAMETO, artiste peintre. Mon travail s&apos;articule
+              Je suis {ARTIST_NAME}, artiste peintre. Mon travail s&apos;articule
               autour du portrait, du regard et de la mémoire. Chaque toile
               cherche à saisir un instant suspendu — un visage, un silence, une
               respiration.

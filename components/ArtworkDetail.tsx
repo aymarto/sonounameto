@@ -70,8 +70,8 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
           <p className="mt-3 text-neutral-600">
             Cette œuvre n&apos;existe pas ou a été retirée de la galerie.
           </p>
-          <Link href="/galerie" className="btn-line mt-6 inline-flex">
-            Retour à la galerie
+          <Link href="/oeuvres" className="btn-line mt-6 inline-flex">
+            Retour aux œuvres
           </Link>
         </div>
       </section>
@@ -84,7 +84,7 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
     <section className="page-content">
       <div className="container-page">
         <Link
-          href="/galerie"
+          href="/oeuvres"
           className="text-xs uppercase tracking-wide-xl text-neutral-500 transition-colors hover:text-black"
         >
           ← Retour à la galerie
@@ -132,7 +132,7 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
                 Demander des informations
               </Link>
               <Link
-                href="/galerie"
+                href="/oeuvres"
                 className="text-xs uppercase tracking-wide-xl text-neutral-500 hover:text-black"
               >
                 Voir toutes les œuvres

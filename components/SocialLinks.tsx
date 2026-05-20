@@ -43,6 +43,22 @@ function IconFacebook({ className }: { className?: string }) {
   );
 }
 
+function IconPortfolio({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden
+    >
+      <path d="M8 4h8l2 4v12H6V8l2-4z" />
+      <path d="M8 4v4h8V4M10 13h4M10 16h4" />
+    </svg>
+  );
+}
+
 function IconMail({ className }: { className?: string }) {
   return (
     <svg
@@ -87,12 +103,18 @@ export default function SocialLinks({
       icon: IconMail,
       external: false,
     },
+    {
+      href: SOCIAL_LINKS.portfolio,
+      label: "Portfolio",
+      icon: IconPortfolio,
+      external: true,
+    },
   ] as const;
 
   return (
     <ul
       className={`flex flex-wrap items-center gap-3 ${className}`}
-      aria-label="Réseaux sociaux et contact"
+      aria-label="Réseaux sociaux, portfolio et contact"
     >
       {items.map(({ href, label, icon: Icon, external }) => (
         <li key={label}>

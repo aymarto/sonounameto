@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { GALLERY_NAME } from "@/lib/brand";
 
 const NAV = [
   { href: "/admin", label: "Tableau de bord", exact: true },
@@ -110,9 +111,9 @@ export default function AdminShell({
             </button>
             <Link
               href="/admin"
-              className="font-display text-xl tracking-wide-xl uppercase"
+              className="whitespace-nowrap font-display text-xl tracking-wide-xl uppercase"
             >
-              SONOUNAMETO
+              {GALLERY_NAME}
             </Link>
             <span className="hidden text-xs uppercase tracking-wide-xl text-neutral-500 md:inline">
               · Admin

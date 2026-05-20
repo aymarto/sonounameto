@@ -37,6 +37,7 @@ body {
 
 body.preloader-active {
   overflow: hidden;
+  height: 100vh;
 }
 
 /* Diaporama hero : fond fixe desktop (équivalent background-attachment: fixed) */
@@ -46,9 +47,195 @@ body.preloader-active {
   }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Hero slider — crossfade stable (transitions CSS, pas de reset d’opacité image) */
+.hero-slide-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity var(--hero-fade-duration, 2.4s) ease-in-out;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.hero-slide-layer--in {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hero-slide-layer--out {
+  opacity: 0;
+  z-index: 3;
+}
+
+.hero-slide-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  transform: scale(1.06);
+  will-change: transform;
+}
+
+.hero-slide-layer--in .hero-slide-image {
+  animation: hero-ken-burns
+    calc(var(--hero-slide-duration, 8s) - var(--hero-fade-duration, 2.4s))
+    ease-out var(--hero-fade-duration, 2.4s) forwards;
+}
+
+@keyframes hero-ken-burns {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.11) translate3d(-1%, -0.75%, 0);
+  }
+}
+
+.hero-slider-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    165deg,
+    rgb(0 0 0 / 55%) 0%,
+    rgb(0 0 0 / 25%) 45%,
+    rgb(0 0 0 / 50%) 100%
+  );
+}
+
+/* Carrousel projets — scroll horizontal + snap */
+.projects-section {
+  width: 100%;
+  overflow: visible;
+}
+
+/* Accueil : aligné sur container-page (centré sur la page) */
+.projects-section--contained {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 72rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .projects-section--contained {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Page Projets : pleine largeur */
+.projects-section--full .projects-track {
+  max-width: 100vw;
+}
+
+.projects-track {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  touch-action: pan-x;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.projects-track::-webkit-scrollbar {
+  display: none;
+}
+
+.projects-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  user-select: none;
+}
+
+.projects-track--centered .projects-track__list {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.projects-track__list {
+  display: flex;
+  width: max-content;
+  gap: 1rem;
+  padding: 0 0 0.5rem;
+}
+
+.projects-section--full .projects-track__list {
+  padding-left: 1.25rem;
+  padding-right: 0;
+}
+
+@media (min-width: 768px) {
+  .projects-track__list {
+    gap: 1.25rem;
+  }
+
+  .projects-section--full .projects-track__list {
+    padding-left: 2rem;
+  }
+}
+
+.projects-track__item {
+  flex: 0 0 auto;
+  width: min(78vw, 320px);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.projects-section--contained .projects-track__item {
+  width: min(72vw, 300px);
+}
+
+@media (min-width: 640px) {
+  .projects-track__item {
+    width: 300px;
+  }
+
+  .projects-section--contained .projects-track__item {
+    width: 280px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .projects-track__item {
+    width: 340px;
+  }
+
+  .projects-section--contained .projects-track__item {
+    width: 300px;
+  }
+}
+
+.projects-track__spacer {
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  scroll-snap-align: end;
+}
+
+.page-content--projects {
+  overflow: visible;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 @layer components {
@@ -88,3 +275,22 @@ a {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide-layer {
+    transition-duration: 0.01ms;
+  }
+
+  .hero-slide-layer--in .hero-slide-image {
+    animation: none;
+    transform: scale(1.05);
+  }
+
+  .hero-slider-overlay {
+    animation: none;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

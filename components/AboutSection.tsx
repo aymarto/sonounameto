@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ARTIST_NAME } from "@/lib/brand";
 
 export default function AboutSection() {
   return (
@@ -8,11 +9,11 @@ export default function AboutSection() {
         <div className="relative aspect-[4/5] w-full overflow-hidden">
           <Image
             src="/images/portrait_3_1.jpeg"
-            alt="Portrait de l'artiste SONOUNAMETO"
+            alt={`Portrait de ${ARTIST_NAME}`}
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover grayscale"
-            priority={false}
+            priority
           />
         </div>
         <div>
@@ -22,7 +23,7 @@ export default function AboutSection() {
           </h2>
           <div className="mt-4 space-y-3 text-neutral-700 leading-relaxed">
             <p>
-              SONOUNAMETO est un artiste peintre dont le travail s&apos;articule
+              {ARTIST_NAME} est un artiste peintre dont le travail s&apos;articule
               autour du portrait, de la mémoire et de la lumière. Chaque toile
               cherche à saisir un instant suspendu, un regard, une présence.
             </p>

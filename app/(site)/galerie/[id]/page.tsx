@@ -1,23 +1,9 @@
-import type { Metadata } from "next";
-import ArtworkDetail from "@/components/ArtworkDetail";
-import { getStaticArtwork } from "@/lib/data";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: { id: string };
 };
 
-export function generateMetadata({ params }: Props): Metadata {
-  const art = getStaticArtwork(params.id);
-  if (!art) {
-    return { title: "Œuvre — SONOUNAMETO" };
-  }
-  return {
-    title: `${art.title} — SONOUNAMETO`,
-    description: art.shortDescription || art.description,
-  };
-}
-
-export default function ArtworkPage({ params }: Props) {
-  const initialArtwork = getStaticArtwork(params.id) ?? null;
-  return <ArtworkDetail id={params.id} initialArtwork={initialArtwork} />;
+export default function GalerieIdRedirectPage({ params }: Props) {
+  redirect(`/oeuvres/${params.id}`);
 }

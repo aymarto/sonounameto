@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
 import DeployVersionCheck from "@/components/DeployVersionCheck";
+import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
 import "./globals.css";
 
 const buildId = process.env.NEXT_PUBLIC_BUILD_ID ?? "dev";
@@ -15,9 +16,8 @@ const sans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SONOUNAMETO — Galerie de l'artiste",
-  description:
-    "Galerie officielle de l'artiste SONOUNAMETO. Œuvres, évènements et expositions.",
+  title: `${GALLERY_NAME} — ${ARTIST_NAME}`,
+  description: `${GALLERY_NAME}, ${ARTIST_NAME}. Œuvres, expositions et évènements.`,
 };
 
 export const viewport = {

@@ -1,9 +1,23 @@
+import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
 import {
   DEFAULT_HERO,
   DEFAULT_HERO_SLIDES,
   type HeroSettings,
   type HeroSlide,
 } from "@/lib/types";
+
+/** Titre / sous-titre toujours alignés sur la marque (évite anciennes valeurs Firebase). */
+function withBrandText(
+  data: Partial<HeroSettings> | null | undefined,
+  base: Pick<HeroSettings, "description" | "slides">
+): HeroSettings {
+  return {
+    slides: base.slides,
+    title: GALLERY_NAME,
+    subtitle: ARTIST_NAME,
+    description: data?.description ?? DEFAULT_HERO.description,
+  };
+}
 
 /** Les 3 images locales du dossier public/images */
 export function getLocalHeroSlides(): HeroSlide[] {
@@ -27,12 +41,10 @@ export function normalizeHeroSettings(
   data: Partial<HeroSettings> | null | undefined
 ): HeroSettings {
   if (!data || !hasFirebaseSlides(data)) {
-    return {
+    return withBrandText(data, {
       slides: getLocalHeroSlides(),
-      title: data?.title ?? DEFAULT_HERO.title,
-      subtitle: data?.subtitle ?? DEFAULT_HERO.subtitle,
       description: data?.description ?? DEFAULT_HERO.description,
-    };
+    });
   }
 
   let slides: HeroSlide[] = [];
@@ -52,12 +64,10 @@ export function normalizeHeroSettings(
     else break;
   }
 
-  return {
+  return withBrandText(data, {
     slides: slides.slice(0, 3),
-    title: data.title ?? DEFAULT_HERO.title,
-    subtitle: data.subtitle ?? DEFAULT_HERO.subtitle,
-    description: data.description ?? DEFAULT_HERO.description,
-  };
+    description: data?.description ?? DEFAULT_HERO.description,
+  });
 }
 
 /** Repli complet : 3 images + textes par défaut */

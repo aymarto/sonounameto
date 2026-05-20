@@ -6,6 +6,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { getHero, setHero } from "@/lib/firestore";
+import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
 import { normalizeHeroSettings } from "@/lib/hero";
 import { DEFAULT_HERO, DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
@@ -95,34 +96,15 @@ export default function AdminHeroPage() {
         className="grid gap-10 md:grid-cols-[1.2fr_1fr]"
       >
         <div className="space-y-6">
-          <div>
-            <label htmlFor="title" className="eyebrow block">
-              Titre principal
-            </label>
-            <input
-              id="title"
-              type="text"
-              required
-              value={hero.title}
-              onChange={(e) =>
-                setHeroState({ ...hero, title: e.target.value })
-              }
-              className="input-line mt-2 font-display"
-            />
-          </div>
-          <div>
-            <label htmlFor="subtitle" className="eyebrow block">
-              Sous-titre
-            </label>
-            <input
-              id="subtitle"
-              type="text"
-              value={hero.subtitle}
-              onChange={(e) =>
-                setHeroState({ ...hero, subtitle: e.target.value })
-              }
-              className="input-line mt-2 font-display"
-            />
+          <div className="rounded border border-black/10 bg-neutral-50 px-4 py-3 text-sm">
+            <p className="eyebrow">Nom de la galerie</p>
+            <p className="mt-1 font-display text-xl">{GALLERY_NAME}</p>
+            <p className="eyebrow mt-4">Artiste</p>
+            <p className="mt-1 font-display text-lg">{ARTIST_NAME}</p>
+            <p className="mt-3 text-xs text-neutral-500">
+              Fixés sur tout le site. Modifiez uniquement la description et les
+              images ci-dessous.
+            </p>
           </div>
           <div>
             <label htmlFor="description" className="eyebrow block">
@@ -189,15 +171,17 @@ export default function AdminHeroPage() {
             )}
             <div className="absolute inset-0 bg-black/40" aria-hidden />
             <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-              <p className="text-[10px] uppercase tracking-wide-xl text-white/70">
-                Galerie de l&apos;artiste
-              </p>
-              <h2 className="mt-3 font-display text-3xl leading-tight">
-                {hero.title}
+              <h2 className="font-display text-3xl uppercase leading-tight">
+                <span className="block whitespace-nowrap tracking-wide-xl">
+                  {GALLERY_NAME}
+                </span>
+                <span className="mt-2 flex flex-wrap items-baseline gap-x-3 text-2xl normal-case text-white/80">
+                  <span className="font-sans font-extralight italic tracking-normal text-white/75">
+                    by
+                  </span>
+                  <span className="font-display tracking-tight">{ARTIST_NAME}</span>
+                </span>
               </h2>
-              <p className="font-display text-2xl text-white/80">
-                {hero.subtitle}
-              </p>
               <p className="mt-4 text-sm text-white/85">{hero.description}</p>
             </div>
           </div>

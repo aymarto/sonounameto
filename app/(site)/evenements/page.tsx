@@ -1,13 +1,13 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import { ARTIST_NAME, pageTitle } from "@/lib/brand";
 import { events } from "@/lib/data";
 import { formatDateRange } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "Mes évènements — SONOUNAMETO",
-  description:
-    "Expositions, résidences et salons à venir de l'artiste SONOUNAMETO.",
+  title: pageTitle("Expositions & Évènements"),
+  description: `Expositions et évènements de ${ARTIST_NAME}.`,
 };
 
 export default function EvenementsPage() {
@@ -15,7 +15,7 @@ export default function EvenementsPage() {
     <>
       <PageHeader
         eyebrow="Agenda"
-        title="Mes évènements"
+        title="Expositions & Évènements"
         description="Expositions, résidences et salons. Les prochains rendez-vous pour découvrir les œuvres en personne."
       />
 

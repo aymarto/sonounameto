@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  async redirects() {
+    return [
+      { source: "/galerie", destination: "/oeuvres", permanent: true },
+      { source: "/galerie/:id", destination: "/oeuvres/:id", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

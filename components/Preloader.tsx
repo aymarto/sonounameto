@@ -1,5 +1,7 @@
 "use client";
 
+import { GALLERY_NAME } from "@/lib/brand";
+
 type Props = {
   visible: boolean;
 };
@@ -15,8 +17,11 @@ export default function Preloader({ visible }: Props) {
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
-      <p className="font-display text-2xl tracking-wide-xl uppercase md:text-3xl">
-        SONOUNAMETO
+      <p
+        className="whitespace-nowrap font-display text-2xl tracking-wide-xl uppercase md:text-3xl"
+        suppressHydrationWarning
+      >
+        {GALLERY_NAME}
       </p>
       <div className="mt-8 h-px w-12 animate-pulse bg-white/40" />
       <p className="mt-6 text-[10px] uppercase tracking-wide-xl text-white/50">

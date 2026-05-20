@@ -10,7 +10,7 @@ export default function SiteLayout({
   return (
     <SiteReadyGate>
       <Navbar />
-      <main className="relative z-0 min-h-screen">{children}</main>
+      <main className="relative z-0 min-h-screen overflow-x-visible">{children}</main>
       <Footer />
     </SiteReadyGate>
   );
