@@ -76,20 +76,17 @@ Si le site en production répond avec l’en-tête `Server: fastestcache` ou `s-
 2. **Setup Node.js App** → **Restart**
 3. Sur le téléphone : fermer l’onglet, rouvrir le site (ou navigation privée pour tester)
 
-## ⚠️ Site en 403 Forbidden (urgent)
+## ⚠️ Site en 403 Forbidden
 
-Le commit `cache manage` a déployé un `public/.htaccess` avec `CacheDisable public /` qui **bloque tout le site** sur LiteSpeed.
+Voir le guide détaillé **`CPANEL-403-FIX.md`** (copié dans `deploy/` à chaque build).
 
-**À faire tout de suite (FTP ou Gestionnaire de fichiers cPanel) :**
+**Cause la plus fréquente :** le FTP avec `delete: true` a supprimé le **`.htaccess` caché** que cPanel génère à la **racine** (à côté de `server.js`) pour lancer Node.js — ce n’est **pas** le fichier dans `public/`.
 
-1. Supprimer le fichier **`public/.htaccess`** sur le serveur (dossier `public` à côté de `server.js`).
-2. cPanel → **Setup Node.js App** → **Run NPM Install** → **Restart**.
-3. **LiteSpeed Web Cache Manager** → **Purge All**.
-4. Tester en navigation privée : https://sonounameto.aymart.bj
+**Réparation rapide :**
 
-Le projet **n’utilise plus** de `.htaccess` (Next.js gère le cache via `next.config.mjs`). Poussez le dernier commit après suppression du fichier sur le serveur.
+1. Gestionnaire de fichiers → **Afficher les fichiers cachés** → chercher `.htaccess` à côté de `server.js`.
+2. **Setup Node.js App** → **Save** → **Run NPM Install** → **Restart**.
+3. Vérifier que le **Document Root** du domaine n’est pas uniquement le sous-dossier `public/`.
+4. **LiteSpeed** → Purge All.
 
-## Erreur 403 (autres causes)
-
-- Application Node arrêtée ou `node_modules` absent → **Run NPM Install** + **Restart**.
-- `server.js` absent à la racine → revérifier le déploiement FTP / GitHub Actions.
+Le workflow utilise maintenant `delete: false` pour ne plus effacer la config cPanel.

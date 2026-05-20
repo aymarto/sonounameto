@@ -72,7 +72,8 @@ jobs:
           password: ${{ secrets.CPANEL_PWD }}
           local_dir: ./deploy
           remote_dir: ${{ env.REMOTE_DIR }}
-          delete: "true"
+          # false = ne pas supprimer le .htaccess Passenger généré par cPanel (sinon 403)
+          delete: "false"
           max_retries: "3"
           ftp_ssl_allow: "false"
           ftp_use_feat: "true"

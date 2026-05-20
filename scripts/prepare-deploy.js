@@ -107,6 +107,13 @@ Variables d'environnement (si besoin côté serveur) :
 `;
 fs.writeFileSync(path.join(deployDir, "CPANEL-INSTALL.txt"), readme);
 
+const fix403 = fs.readFileSync(
+  path.join(root, "CPANEL-403-FIX.md"),
+  "utf8"
+);
+fs.writeFileSync(path.join(deployDir, "CPANEL-403-FIX.md"), fix403);
+console.log("  ✓ CPANEL-403-FIX.md");
+
 const startSh = `#!/bin/bash
 cd "$(dirname "$0")"
 export NODE_ENV=production
