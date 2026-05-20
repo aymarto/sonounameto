@@ -9,7 +9,13 @@ import {
   type CSSProperties,
 } from "react";
 import { getHero } from "@/lib/firestore";
-import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import {
+  ARTIST_NAME,
+  HERO_DESCRIPTION,
+  HERO_EYEBROW,
+  HERO_TAGLINE_LINE1,
+  HERO_TAGLINE_LINE2,
+} from "@/lib/brand";
 import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
 import { DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
@@ -133,22 +139,18 @@ export default function Hero() {
       {/* Zone texte hero (fond transparent, le slider reste visible derrière) */}
       <section className="relative z-10 flex min-h-[75vh] items-end text-white md:min-h-[80vh]">
         <div className="container-page pb-12 md:pb-14" suppressHydrationWarning>
-          <h1
-            className="max-w-3xl font-display text-4xl uppercase leading-[1.05] md:text-6xl"
-            suppressHydrationWarning
-          >
-            <span className="block whitespace-nowrap tracking-wide-xl">
-              {GALLERY_NAME}
-            </span>
-            <span className="mt-2 flex flex-wrap items-baseline gap-x-4 text-3xl normal-case text-white/85 md:gap-x-5 md:text-4xl">
-              <span className="font-sans font-extralight italic tracking-normal text-white/75">
-                by
-              </span>
-              <span className="font-display tracking-tight">{ARTIST_NAME}</span>
-            </span>
+          <p className="hero-eyebrow" suppressHydrationWarning>
+            {HERO_EYEBROW}
+          </p>
+          <h1 className="hero-title" suppressHydrationWarning>
+            {ARTIST_NAME}
           </h1>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-white/85 md:text-lg">
-            {heroSafe.description}
+          <p className="hero-tagline" suppressHydrationWarning>
+            <span className="block">{HERO_TAGLINE_LINE1}</span>
+            <span className="block lowercase">{HERO_TAGLINE_LINE2}</span>
+          </p>
+          <p className="hero-description" suppressHydrationWarning>
+            {heroSafe.description || HERO_DESCRIPTION}
           </p>
 
           {slides.length > 1 && (

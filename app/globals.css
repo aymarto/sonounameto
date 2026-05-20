@@ -103,6 +103,28 @@ body.preloader-active {
   }
 }
 
+.hero-eyebrow {
+  @apply text-[0.65rem] uppercase tracking-[0.2em] text-white/80 sm:text-xs;
+}
+
+@media (min-width: 768px) {
+  .hero-eyebrow {
+    letter-spacing: 0.35em;
+  }
+}
+
+.hero-title {
+  @apply mt-3 max-w-3xl font-display text-[clamp(2rem,8vw,3.25rem)] normal-case leading-[1.05] tracking-tight text-white md:text-5xl;
+}
+
+.hero-tagline {
+  @apply mt-3 max-w-xl font-display text-xl leading-[1.15] text-white md:text-3xl;
+}
+
+.hero-description {
+  @apply mt-4 max-w-xl text-sm leading-relaxed text-white/85 md:text-base;
+}
+
 .hero-slider-overlay {
   position: absolute;
   inset: 0;
@@ -263,7 +285,13 @@ body.preloader-active {
   }
 
   .eyebrow {
-    @apply text-xs uppercase tracking-wide-xl text-neutral-500;
+    @apply text-xs uppercase tracking-wide text-neutral-500;
+  }
+
+  @media (min-width: 768px) {
+    .eyebrow {
+      letter-spacing: 0.25em;
+    }
   }
 
   .btn-line {

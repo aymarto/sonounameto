@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { artworks } from "@/lib/data";
-import { formatDate } from "@/lib/format";
+import ArtworkCardMeta from "@/components/ArtworkCardMeta";
 import { hasMultipleImages } from "@/lib/artworks";
 import type { Artwork } from "@/lib/types";
 
@@ -15,14 +15,14 @@ export default function OeuvresGrid({
   basePath = "/oeuvres",
 }: Props) {
   return (
-    <div className="container-page grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-10">
+    <div className="container-page grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-10">
       {items.map((art, index) => (
         <Link
           key={art.id}
           href={`${basePath}/${art.id}`}
-          className="group flex flex-col"
+          className="group flex min-w-0 flex-col"
         >
-          <article className="flex flex-col">
+          <article className="flex min-w-0 flex-col">
             <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
               <Image
                 src={art.imageUrl}
@@ -40,19 +40,11 @@ export default function OeuvresGrid({
                 </span>
               )}
             </div>
-            <div className="mt-3">
-              <div className="flex items-baseline justify-between gap-4">
-                <h2 className="font-display text-2xl leading-tight group-hover:opacity-70">
-                  {art.title}
-                </h2>
-                <span className="shrink-0 text-xs uppercase tracking-wide-xl text-neutral-500">
-                  {formatDate(art.date)}
-                </span>
-              </div>
-              <p className="mt-2 text-sm text-neutral-600">
-                {art.shortDescription}
-              </p>
-            </div>
+            <ArtworkCardMeta
+              title={art.title}
+              date={art.date}
+              description={art.shortDescription}
+            />
           </article>
         </Link>
       ))}

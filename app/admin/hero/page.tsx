@@ -6,7 +6,13 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { getHero, setHero } from "@/lib/firestore";
-import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import {
+  ARTIST_NAME,
+  HERO_DESCRIPTION,
+  HERO_EYEBROW,
+  HERO_TAGLINE_LINE1,
+  HERO_TAGLINE_LINE2,
+} from "@/lib/brand";
 import { normalizeHeroSettings } from "@/lib/hero";
 import { DEFAULT_HERO, DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
@@ -97,28 +103,20 @@ export default function AdminHeroPage() {
       >
         <div className="space-y-6">
           <div className="rounded border border-black/10 bg-neutral-50 px-4 py-3 text-sm">
-            <p className="eyebrow">Nom de la galerie</p>
-            <p className="mt-1 font-display text-xl">{GALLERY_NAME}</p>
+            <p className="eyebrow">Sur-titre hero</p>
+            <p className="mt-1 font-display text-lg uppercase">{HERO_EYEBROW}</p>
             <p className="eyebrow mt-4">Artiste</p>
-            <p className="mt-1 font-display text-lg">{ARTIST_NAME}</p>
-            <p className="mt-3 text-xs text-neutral-500">
-              Fixés sur tout le site. Modifiez uniquement la description et les
-              images ci-dessous.
+            <p className="mt-1 font-display text-xl uppercase">{ARTIST_NAME}</p>
+            <p className="eyebrow mt-4">Accroche</p>
+            <p className="mt-1 font-display text-lg leading-snug">
+              {HERO_TAGLINE_LINE1}
+              <br />
+              <span className="lowercase">{HERO_TAGLINE_LINE2}</span>
             </p>
-          </div>
-          <div>
-            <label htmlFor="description" className="eyebrow block">
-              Description
-            </label>
-            <textarea
-              id="description"
-              rows={4}
-              value={hero.description}
-              onChange={(e) =>
-                setHeroState({ ...hero, description: e.target.value })
-              }
-              className="input-line mt-2 resize-none"
-            />
+            <p className="mt-3 text-xs text-neutral-500">
+              Textes fixes (sans nom de galerie). Modifiez uniquement les images
+              ci-dessous.
+            </p>
           </div>
 
           <div className="space-y-8 border-t border-black/10 pt-8">
@@ -171,18 +169,17 @@ export default function AdminHeroPage() {
             )}
             <div className="absolute inset-0 bg-black/40" aria-hidden />
             <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-              <h2 className="font-display text-3xl uppercase leading-tight">
-                <span className="block whitespace-nowrap tracking-wide-xl">
-                  {GALLERY_NAME}
-                </span>
-                <span className="mt-2 flex flex-wrap items-baseline gap-x-3 text-2xl normal-case text-white/80">
-                  <span className="font-sans font-extralight italic tracking-normal text-white/75">
-                    by
-                  </span>
-                  <span className="font-display tracking-tight">{ARTIST_NAME}</span>
-                </span>
+              <p className="hero-eyebrow">{HERO_EYEBROW}</p>
+              <h2 className="hero-title mt-3 text-3xl normal-case">
+                {ARTIST_NAME}
               </h2>
-              <p className="mt-4 text-sm text-white/85">{hero.description}</p>
+              <p className="hero-tagline mt-3 text-xl">
+                <span className="block">{HERO_TAGLINE_LINE1}</span>
+                <span className="block lowercase">{HERO_TAGLINE_LINE2}</span>
+              </p>
+              <p className="hero-description mt-3 text-sm text-white/85">
+                {hero.description || HERO_DESCRIPTION}
+              </p>
             </div>
           </div>
           <div className="mt-3 flex gap-2">

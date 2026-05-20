@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { GALLERY_NAME } from "@/lib/brand";
+import GalleryName from "@/components/GalleryName";
 
 function LoginForm() {
   const router = useRouter();
@@ -131,11 +131,8 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-paper px-5 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <Link
-            href="/"
-            className="whitespace-nowrap font-display text-2xl tracking-wide-xl uppercase"
-          >
-            {GALLERY_NAME}
+          <Link href="/">
+            <GalleryName as="span" variant="preloader" className="text-2xl" />
           </Link>
           <p className="eyebrow mt-4">Espace privé</p>
           <h1 className="section-title mt-2">Connexion</h1>

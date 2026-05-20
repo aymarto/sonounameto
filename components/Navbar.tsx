@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GALLERY_NAME } from "@/lib/brand";
+import GalleryName from "@/components/GalleryName";
 import { NAV_LINKS, isNavActive } from "@/lib/navigation";
 
 const linkClass = (active: boolean) =>
@@ -35,10 +35,10 @@ export default function Navbar() {
           <div className="flex w-full items-center justify-between md:w-auto md:justify-center">
             <Link
               href="/"
-              className="whitespace-nowrap font-display text-xl tracking-wide-xl uppercase text-white md:text-2xl"
+              className="text-white"
               suppressHydrationWarning
             >
-              <span suppressHydrationWarning>{GALLERY_NAME}</span>
+              <GalleryName as="span" variant="nav" suppressHydrationWarning />
             </Link>
             <button
               type="button"

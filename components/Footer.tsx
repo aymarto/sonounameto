@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SocialLinks from "@/components/SocialLinks";
+import GalleryName from "@/components/GalleryName";
 import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
 import { NAV_LINKS } from "@/lib/navigation";
 import { SOCIAL_LINKS } from "@/lib/social";
@@ -11,11 +12,8 @@ export default function Footer() {
     <footer className="site-footer relative z-20 border-t border-white/10 bg-ink text-white">
       <div className="container-page grid gap-8 py-10 md:grid-cols-4">
         <div className="md:col-span-2">
-          <Link
-            href="/"
-            className="whitespace-nowrap font-display text-2xl tracking-wide-xl uppercase text-white"
-          >
-            {GALLERY_NAME}
+          <Link href="/" className="text-white">
+            <GalleryName as="span" variant="inline" className="text-2xl" />
           </Link>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-neutral-400">
             Galerie de l&apos;artiste {ARTIST_NAME}. Portraits, expositions et

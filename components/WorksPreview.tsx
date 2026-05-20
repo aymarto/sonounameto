@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { artworks } from "@/lib/data";
-import { formatDate } from "@/lib/format";
+import ArtworkCardMeta from "@/components/ArtworkCardMeta";
 
 export default function WorksPreview() {
   const preview = artworks.slice(0, 4);
@@ -24,7 +24,7 @@ export default function WorksPreview() {
             <Link
               key={art.id}
               href={`/oeuvres/${art.id}`}
-              className="group block"
+              className="group block min-w-0"
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
                 <Image
@@ -38,14 +38,11 @@ export default function WorksPreview() {
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               </div>
-              <div className="mt-4">
-                <h3 className="font-display text-xl leading-tight">
-                  {art.title}
-                </h3>
-                <p className="mt-1 text-xs uppercase tracking-wide-xl text-neutral-500">
-                  {formatDate(art.date)}
-                </p>
-              </div>
+              <ArtworkCardMeta
+                title={art.title}
+                date={art.date}
+                size="md"
+              />
             </Link>
           ))}
         </div>

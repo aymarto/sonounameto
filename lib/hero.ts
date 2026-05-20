@@ -1,4 +1,4 @@
-import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import { ARTIST_NAME, HERO_EYEBROW } from "@/lib/brand";
 import {
   DEFAULT_HERO,
   DEFAULT_HERO_SLIDES,
@@ -13,7 +13,7 @@ function withBrandText(
 ): HeroSettings {
   return {
     slides: base.slides,
-    title: GALLERY_NAME,
+    title: HERO_EYEBROW,
     subtitle: ARTIST_NAME,
     description: data?.description ?? DEFAULT_HERO.description,
   };

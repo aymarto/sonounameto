@@ -1,4 +1,8 @@
-import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import {
+  ARTIST_NAME,
+  GALLERY_NAME,
+  HERO_DESCRIPTION,
+} from "@/lib/brand";
 
 export type ArtworkImage = {
   url: string;
@@ -60,6 +64,5 @@ export const DEFAULT_HERO: HeroSettings = {
   slides: DEFAULT_HERO_SLIDES,
   title: GALLERY_NAME,
   subtitle: ARTIST_NAME,
-  description:
-    "Une exploration des visages, du silence et de la lumière. Découvrez les œuvres et les évènements à venir.",
+  description: HERO_DESCRIPTION,
 };
