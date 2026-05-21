@@ -2,6 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: "/api/media/:path*",
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: "/galerie", destination: "/oeuvres", permanent: true },

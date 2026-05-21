@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
 import { uploadImage, deleteImage } from "@/lib/storage";
 
@@ -22,6 +21,7 @@ export default function ImageUploader({
   const inputRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState(false);
 
   const aspectClass =
     aspect === "square"
@@ -32,19 +32,19 @@ export default function ImageUploader({
 
   async function handleFile(file: File) {
     setError(null);
+    setPreviewError(false);
     setProgress(0);
     try {
       const result = await uploadImage(file, folder, (p) =>
         setProgress(Math.round(p * 100))
       );
-      // Best-effort cleanup of previous file
       if (value?.path && value.path !== result.path) {
         deleteImage(value.path).catch(() => {});
       }
       onChange({ url: result.url, path: result.path });
     } catch (err) {
       console.error(err);
-      setError("L'upload a échoué.");
+      setError(err instanceof Error ? err.message : "L'upload a échoué.");
     } finally {
       setProgress(null);
       if (inputRef.current) inputRef.current.value = "";
@@ -55,6 +55,7 @@ export default function ImageUploader({
     if (value?.path) {
       deleteImage(value.path).catch(() => {});
     }
+    setPreviewError(false);
     onChange(null);
   }
 
@@ -64,18 +65,17 @@ export default function ImageUploader({
       <div
         className={`relative ${aspectClass} w-full overflow-hidden border border-dashed border-black/30 bg-neutral-50`}
       >
-        {value?.url ? (
-          <Image
+        {value?.url && !previewError ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={value.url}
             alt=""
-            fill
-            sizes="(min-width: 768px) 33vw, 100vw"
-            className="object-cover"
-            unoptimized
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={() => setPreviewError(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs uppercase tracking-wide-xl text-neutral-400">
-            Aucune image
+          <div className="flex h-full w-full items-center justify-center px-4 text-center text-xs uppercase tracking-wide-xl text-neutral-400">
+            {previewError ? "Aperçu indisponible" : "Aucune image"}
           </div>
         )}
 
@@ -117,6 +117,12 @@ export default function ImageUploader({
         )}
       </div>
 
+      {previewError && value?.url && (
+        <p className="mt-2 text-sm text-amber-700">
+          Fichier enregistré ({value.url}) mais l&apos;aperçu ne charge pas. Vérifiez
+          que le serveur sert bien le dossier uploads.
+        </p>
+      )}
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );

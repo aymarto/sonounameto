@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
 import { uploadImage, deleteImage } from "@/lib/storage";
 import type { ArtworkImage } from "@/lib/types";
@@ -59,13 +58,10 @@ export default function GalleryImagesUploader({ images, onChange }: Props) {
               key={`${img.url}-${index}`}
               className="relative aspect-square overflow-hidden border border-black/10 bg-neutral-50"
             >
-              <Image
+              <img
                 src={img.url}
                 alt=""
-                fill
-                sizes="120px"
-                className="object-cover"
-                unoptimized
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <button
                 type="button"

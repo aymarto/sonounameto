@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import {
   absolutePathFromRelative,
   buildRelativeUploadPath,
+  getPublicDir,
   getUploadsRoot,
   publicUrlFromRelative,
 } from "@/lib/server/upload-paths";
@@ -110,7 +111,11 @@ export async function GET() {
   try {
     const root = getUploadsRoot();
     await mkdir(root, { recursive: true });
-    return NextResponse.json({ ok: true, root });
+    return NextResponse.json({
+      ok: true,
+      root,
+      publicDir: getPublicDir(),
+    });
   } catch {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
