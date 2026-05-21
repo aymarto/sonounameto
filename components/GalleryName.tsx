@@ -13,7 +13,7 @@ const variantClass: Record<NonNullable<Props["variant"]>, string> = {
     "font-display uppercase leading-[1.05] tracking-normal text-[clamp(1.35rem,6.5vw,3.75rem)] md:tracking-wide-xl",
   preloader:
     "max-w-[min(100%,18rem)] text-center font-display text-xl uppercase leading-tight tracking-normal md:max-w-none md:text-3xl md:tracking-wide-xl",
-  nav: "font-display text-[0.7rem] uppercase leading-tight tracking-normal whitespace-nowrap sm:text-sm md:text-2xl md:tracking-wide-xl",
+  nav: "font-display text-xl uppercase leading-tight tracking-[0.05em] whitespace-nowrap sm:text-xl md:text-2xl md:tracking-wide-xl",
   inline: "font-display uppercase tracking-normal md:tracking-wide-xl",
 };
 
