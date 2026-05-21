@@ -143,7 +143,8 @@ export async function listPublishedProjects(): Promise<Project[]> {
   if (!isFirebaseConfigured()) return [];
   try {
     return publishedRows(await fetchProjects());
-  } catch {
+  } catch (err) {
+    console.error("[Firestore] listPublishedProjects:", err);
     return [];
   }
 }

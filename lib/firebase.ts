@@ -17,6 +17,10 @@ export function setRuntimeFirebaseConfig(config: FirebasePublicConfig): void {
 
 function getConfig(): FirebasePublicConfig {
   if (runtimeConfig) return runtimeConfig;
+  if (typeof window !== "undefined") {
+    const inline = window.__FIREBASE_CONFIG__;
+    if (inline && isValidFirebaseConfig(inline)) return inline;
+  }
   return resolveFirebaseConfig();
 }
 

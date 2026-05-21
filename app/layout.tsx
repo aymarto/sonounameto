@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
 import DeployVersionCheck from "@/components/DeployVersionCheck";
 import { ARTIST_NAME, GALLERY_NAME } from "@/lib/brand";
+import {
+  isValidFirebaseConfig,
+  resolveFirebaseConfig,
+} from "@/lib/firebase-config";
 import "./globals.css";
 
 const buildId = process.env.NEXT_PUBLIC_BUILD_ID ?? "dev";
@@ -29,9 +33,22 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const firebaseConfig = resolveFirebaseConfig();
+  const inlineFirebaseConfig = isValidFirebaseConfig(firebaseConfig)
+    ? JSON.stringify(firebaseConfig).replace(/</g, "\\u003c")
+    : null;
+
   return (
     <html lang="fr" className={sans.variable}>
       <head>
+        {inlineFirebaseConfig && (
+          <script
+            id="firebase-config"
+            dangerouslySetInnerHTML={{
+              __html: `window.__FIREBASE_CONFIG__=${inlineFirebaseConfig};`,
+            }}
+          />
+        )}
         <link
           href="https://api.fontshare.com/v2/css?f[]=butler@400,500,700&display=swap"
           rel="stylesheet"

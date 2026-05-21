@@ -3,7 +3,7 @@
 import {
   createContext,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
@@ -13,12 +13,11 @@ import {
   signOut as fbSignOut,
   type User,
 } from "firebase/auth";
-import { getFirebase, setRuntimeFirebaseConfig } from "@/lib/firebase";
-import type { FirebasePublicConfig } from "@/lib/firebase-config";
 import {
-  isValidFirebaseConfig,
-  resolveFirebaseConfig,
-} from "@/lib/firebase-config";
+  bootstrapFirebaseFromEnv,
+  ensureFirebaseInitialized,
+} from "@/lib/firebase-bootstrap";
+import { getFirebase } from "@/lib/firebase";
 
 type AuthContextValue = {
   user: User | null;
@@ -36,64 +35,49 @@ const AuthContext = createContext<AuthContextValue>({
   signOut: async () => {},
 });
 
-async function loadFirebaseConfig(): Promise<FirebasePublicConfig | null> {
-  try {
-    const res = await fetch("/api/firebase-config", { cache: "no-store" });
-    if (!res.ok) throw new Error("Config indisponible");
-    const data = (await res.json()) as FirebasePublicConfig & {
-      configured?: boolean;
-    };
-    if (data.configured && isValidFirebaseConfig(data)) {
-      return {
-        apiKey: data.apiKey,
-        authDomain: data.authDomain,
-        projectId: data.projectId,
-        storageBucket: data.storageBucket,
-        messagingSenderId: data.messagingSenderId,
-        appId: data.appId,
-      };
-    }
-  } catch {
-    // API indisponible (ex. premier chargement) — repli build / .env.local
-  }
-
-  const fallback = resolveFirebaseConfig();
-  return isValidFirebaseConfig(fallback) ? fallback : null;
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [firebaseReady, setFirebaseReady] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
+  useLayoutEffect(() => {
     let unsubAuth: (() => void) | undefined;
+    let active = true;
 
-    (async () => {
-      const config = await loadFirebaseConfig();
-      if (cancelled) return;
-
-      if (config) {
-        setRuntimeFirebaseConfig(config);
-      }
-
+    function attachAuthListener() {
       const fb = getFirebase();
-      setFirebaseReady(Boolean(fb));
-
       if (!fb) {
         setLoading(false);
         return;
       }
-
       unsubAuth = onAuthStateChanged(fb.auth, (u) => {
+        if (!active) return;
         setUser(u);
         setLoading(false);
       });
-    })();
+    }
+
+    if (bootstrapFirebaseFromEnv()) {
+      setFirebaseReady(true);
+      attachAuthListener();
+      return () => {
+        active = false;
+        unsubAuth?.();
+      };
+    }
+
+    void ensureFirebaseInitialized().then((ready) => {
+      if (!active) return;
+      setFirebaseReady(ready);
+      if (ready) {
+        attachAuthListener();
+      } else {
+        setLoading(false);
+      }
+    });
 
     return () => {
-      cancelled = true;
+      active = false;
       unsubAuth?.();
     };
   }, []);
