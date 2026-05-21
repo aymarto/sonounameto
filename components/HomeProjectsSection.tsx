@@ -1,32 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/components/AuthProvider";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import ProjectCarousel from "@/components/ProjectCarousel";
 import { listPublishedProjects } from "@/lib/firestore-content";
+import { useCmsQuery } from "@/lib/use-cms-query";
 import type { Project } from "@/lib/types";
 
 export default function HomeProjectsSection() {
-  const { firebaseReady } = useAuth();
-  const [items, setItems] = useState<Project[] | null>(null);
-
-  useEffect(() => {
-    if (!firebaseReady) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const rows = await listPublishedProjects();
-        if (!cancelled) setItems(rows);
-      } catch {
-        if (!cancelled) setItems([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [firebaseReady]);
+  const { data, loading, ready } = useCmsQuery<Project[]>(
+    () => listPublishedProjects()
+  );
+  const items = data ?? [];
 
   return (
     <section className="section-pad bg-white">
@@ -47,15 +32,15 @@ export default function HomeProjectsSection() {
       </div>
 
       <div className="mt-8">
-        {items === null || !firebaseReady ? (
+        {loading ? (
           <div className="container-page animate-pulse py-12 text-sm text-neutral-400">
             Chargement…
           </div>
-        ) : items.length === 0 ? (
+        ) : ready && items.length === 0 ? (
           <ContentUnavailable className="py-12" />
-        ) : (
+        ) : ready ? (
           <ProjectCarousel layout="contained" items={items} />
-        )}
+        ) : null}
       </div>
 
       <div className="container-page mt-6 md:hidden">

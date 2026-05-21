@@ -29,6 +29,7 @@ export default function OeuvresGrid({
           <article className="flex min-w-0 flex-col">
             <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
               <CmsImage
+                key={art.imageUrl}
                 src={art.imageUrl}
                 alt={art.title}
                 fill

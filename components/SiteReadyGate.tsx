@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Preloader from "@/components/Preloader";
-import { preloadImages } from "@/lib/preload";
 
 const SESSION_KEY = "nounameto-site-ready";
-/** Délai max absolu — la page s’affiche toujours après ce délai */
-const FAILSAFE_MS = 3000;
+const FAILSAFE_MS = 2500;
 
 function isSessionReady(): boolean {
   try {
@@ -29,59 +27,37 @@ export default function SiteReadyGate({
 }: {
   children: React.ReactNode;
 }) {
-  const [ready, setReady] = useState(false);
-  const [showPreloader, setShowPreloader] = useState(true);
+  // Toujours false au 1er rendu (serveur + hydratation) — évite l'erreur d'hydratation.
+  const [showPreloader, setShowPreloader] = useState(false);
 
   useEffect(() => {
     if (isSessionReady()) {
-      setReady(true);
-      setShowPreloader(false);
       document.body.classList.remove("preloader-active");
       return;
     }
 
-    let done = false;
-
-    const finish = () => {
-      if (done) return;
-      done = true;
-      setReady(true);
-      document.body.classList.remove("preloader-active");
-      markSessionReady();
-      window.setTimeout(() => setShowPreloader(false), 400);
-    };
-
+    setShowPreloader(true);
     document.body.classList.add("preloader-active");
 
-    const failSafe = window.setTimeout(finish, FAILSAFE_MS);
+    const finish = () => {
+      document.body.classList.remove("preloader-active");
+      markSessionReady();
+      setShowPreloader(false);
+    };
 
-    void Promise.all([
-      document.fonts?.ready ?? Promise.resolve(),
-      preloadImages([]),
-    ]).then(finish);
+    const failSafe = window.setTimeout(finish, FAILSAFE_MS);
+    void (document.fonts?.ready ?? Promise.resolve()).then(finish);
 
     return () => {
       window.clearTimeout(failSafe);
       document.body.classList.remove("preloader-active");
     };
-    // Une seule passe au montage (évite blocage React Strict Mode + re-navigations)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      {showPreloader && <Preloader visible={!ready} />}
-
-      <div
-        className={
-          ready
-            ? "opacity-100 transition-opacity duration-500 ease-out"
-            : "pointer-events-none opacity-0 select-none"
-        }
-        aria-hidden={!ready}
-      >
-        {children}
-      </div>
+      {showPreloader && <Preloader visible />}
+      {children}
     </>
   );
 }

@@ -118,6 +118,7 @@ export default function ProjectCarousel({
               >
                 <article className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
                   <CmsImage
+                    key={project.coverImageUrl}
                     src={project.coverImageUrl}
                     alt={project.title}
                     fill

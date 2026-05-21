@@ -6,7 +6,15 @@ import SocialLinks from "@/components/SocialLinks";
 import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 export default function ContactPageContent() {
-  const { settings } = useSiteSettings();
+  const { settings, loading, loaded } = useSiteSettings();
+
+  if (loading || !loaded) {
+    return (
+      <div className="container-page animate-pulse py-8 text-sm text-neutral-500">
+        Chargement…
+      </div>
+    );
+  }
 
   return (
     <>
@@ -32,16 +40,22 @@ export default function ContactPageContent() {
             </div>
             <div>
               <p className="eyebrow">Email</p>
-              <a
-                href={`mailto:${settings.contactEmail}`}
-                className="mt-2 block text-lg hover:opacity-70"
-              >
-                {settings.contactEmail}
-              </a>
+              {settings.contactEmail ? (
+                <a
+                  href={`mailto:${settings.contactEmail}`}
+                  className="mt-2 block text-lg hover:opacity-70"
+                >
+                  {settings.contactEmail}
+                </a>
+              ) : (
+                <p className="mt-2 text-sm text-neutral-500">—</p>
+              )}
             </div>
             <div>
               <p className="eyebrow">Atelier</p>
-              <p className="mt-2 text-neutral-600">{settings.contactLocation}</p>
+              <p className="mt-2 text-neutral-600">
+                {settings.contactLocation || "—"}
+              </p>
             </div>
           </div>
 

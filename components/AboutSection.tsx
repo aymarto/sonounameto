@@ -1,16 +1,16 @@
 "use client";
 
-import CmsImage from "@/components/CmsImage";
 import Link from "next/link";
+import CmsImage from "@/components/CmsImage";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import { ARTIST_NAME } from "@/lib/brand";
 import { hasAboutContent, splitParagraphs } from "@/lib/site-settings";
 
 export default function AboutSection() {
-  const { settings, loading } = useSiteSettings();
+  const { settings, loading, loaded } = useSiteSettings();
 
-  if (loading) {
+  if (loading || !loaded) {
     return (
       <section className="section-pad bg-white">
         <div className="container-page animate-pulse py-8 text-sm text-neutral-500">
@@ -36,6 +36,7 @@ export default function AboutSection() {
         {settings.aboutImageUrl && (
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <CmsImage
+              key={settings.aboutImageUrl}
               src={settings.aboutImageUrl}
               alt={`Portrait de ${ARTIST_NAME}`}
               fill

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@/components/AuthProvider";
 import EventsPreview from "@/components/EventsPreview";
 import { listPublishedEvents } from "@/lib/firestore-content";
+import { useCmsQuery } from "@/lib/use-cms-query";
 import type { ArtEvent } from "@/lib/types";
 
 type Props = {
@@ -11,26 +10,12 @@ type Props = {
 };
 
 export default function EventsPreviewDynamic({ limit = 3 }: Props) {
-  const { firebaseReady } = useAuth();
-  const [events, setEvents] = useState<ArtEvent[] | null>(null);
+  const { data, loading, ready } = useCmsQuery<ArtEvent[]>(
+    () => listPublishedEvents(),
+    [limit]
+  );
 
-  useEffect(() => {
-    if (!firebaseReady) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const rows = await listPublishedEvents();
-        if (!cancelled) setEvents(rows.slice(0, limit));
-      } catch {
-        if (!cancelled) setEvents([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [firebaseReady, limit]);
-
-  if (!firebaseReady || events === null) {
+  if (loading) {
     return (
       <div className="container-page animate-pulse py-12 text-sm text-neutral-400">
         Chargement…
@@ -38,5 +23,8 @@ export default function EventsPreviewDynamic({ limit = 3 }: Props) {
     );
   }
 
+  if (!ready) return null;
+
+  const events = (data ?? []).slice(0, limit);
   return <EventsPreview events={events} />;
 }

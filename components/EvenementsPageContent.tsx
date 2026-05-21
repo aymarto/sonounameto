@@ -1,35 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import CmsImage from "@/components/CmsImage";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import PageHeader from "@/components/PageHeader";
-import { useAuth } from "@/components/AuthProvider";
 import { formatDateRange } from "@/lib/format";
 import { listPublishedEvents } from "@/lib/firestore-content";
+import { useCmsQuery } from "@/lib/use-cms-query";
 import type { ArtEvent } from "@/lib/types";
 
 export default function EvenementsPageContent() {
-  const { firebaseReady } = useAuth();
-  const [events, setEvents] = useState<ArtEvent[] | null>(null);
+  const { data, loading, ready } = useCmsQuery<ArtEvent[]>(
+    () => listPublishedEvents()
+  );
+  const events = data ?? [];
 
-  useEffect(() => {
-    if (!firebaseReady) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const rows = await listPublishedEvents();
-        if (!cancelled) setEvents(rows);
-      } catch {
-        if (!cancelled) setEvents([]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [firebaseReady]);
-
-  if (!firebaseReady || events === null) {
+  if (loading) {
     return (
       <div className="container-page animate-pulse py-16 text-sm text-neutral-500">
         Chargement…
@@ -46,7 +31,7 @@ export default function EvenementsPageContent() {
       />
 
       <section className="page-content">
-        {events.length === 0 ? (
+        {ready && events.length === 0 ? (
           <ContentUnavailable />
         ) : (
           <div className="container-page space-y-10 md:space-y-12">
@@ -61,6 +46,7 @@ export default function EvenementsPageContent() {
                 {ev.imageUrl && (
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
                     <CmsImage
+                      key={ev.imageUrl}
                       src={ev.imageUrl}
                       alt={ev.title}
                       fill

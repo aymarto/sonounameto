@@ -3,48 +3,31 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
 } from "react";
-import { useAuth } from "@/components/AuthProvider";
 import { getHero } from "@/lib/firestore";
 import { normalizeHeroSettings } from "@/lib/hero";
-import { EMPTY_HERO, type HeroSettings } from "@/lib/types";
+import { useCmsQuery } from "@/lib/use-cms-query";
+import { EMPTY_HERO } from "@/lib/types";
 
 const SLIDE_INTERVAL_MS = 8000;
 const FADE_DURATION_MS = 2400;
 
 export default function Hero() {
-  const { firebaseReady } = useAuth();
-  const [hero, setHero] = useState<HeroSettings | null>(null);
-  const [index, setIndex] = useState(0);
-  const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
-  const prevIndexRef = useRef(0);
+  const { data, loading } = useCmsQuery(async () => {
+    const fromDb = await getHero();
+    return normalizeHeroSettings(fromDb);
+  });
 
-  const heroSafe = useMemo(
-    () => normalizeHeroSettings(hero ?? EMPTY_HERO),
-    [hero]
-  );
+  const heroSafe = data ?? EMPTY_HERO;
   const slides = heroSafe.slides;
   const slideCount = slides.length;
 
-  useEffect(() => {
-    if (!firebaseReady) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const fromDb = await getHero();
-        if (!cancelled) setHero(fromDb ? normalizeHeroSettings(fromDb) : null);
-      } catch {
-        if (!cancelled) setHero(null);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [firebaseReady]);
+  const [index, setIndex] = useState(0);
+  const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
+  const prevIndexRef = useRef(0);
 
   useEffect(() => {
     if (index >= slideCount) setIndex(0);
@@ -68,12 +51,13 @@ export default function Hero() {
   }, [slideCount]);
 
   useEffect(() => {
+    if (loading) return;
     slides.forEach((slide) => {
       if (!slide.imageUrl) return;
       const img = new window.Image();
       img.src = slide.imageUrl;
     });
-  }, [slides]);
+  }, [slides, loading]);
 
   const isTransitioning = leavingIndex !== null;
 
@@ -97,45 +81,46 @@ export default function Hero() {
         }
         aria-hidden
       >
-        {slides.map((slide, i) => {
-          const isIncoming = i === index;
-          const isOutgoing = i === leavingIndex && !isIncoming;
-          return (
-            <div
-              key={`${slide.imageUrl}-${i}`}
-              className={`hero-slide-layer ${isIncoming ? "hero-slide-layer--in" : ""} ${
-                isOutgoing ? "hero-slide-layer--out" : ""
-              }`}
-              aria-hidden={!isIncoming && !isOutgoing}
-            >
-              <div className="hero-slide-media">
-                <img
-                  src={slide.imageUrl}
-                  alt=""
-                  decoding="async"
-                  loading={i === 0 ? "eager" : "lazy"}
-                  className="hero-slide-image"
-                />
+        {!loading &&
+          slides.map((slide, i) => {
+            const isIncoming = i === index;
+            const isOutgoing = i === leavingIndex && !isIncoming;
+            return (
+              <div
+                key={`${slide.imageUrl}-${i}`}
+                className={`hero-slide-layer ${isIncoming ? "hero-slide-layer--in" : ""} ${
+                  isOutgoing ? "hero-slide-layer--out" : ""
+                }`}
+                aria-hidden={!isIncoming && !isOutgoing}
+              >
+                <div className="hero-slide-media">
+                  <img
+                    src={slide.imageUrl}
+                    alt=""
+                    decoding="async"
+                    loading={i === 0 ? "eager" : "lazy"}
+                    className="hero-slide-image"
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         <div className="hero-slider-overlay" />
       </div>
 
       <section className="relative z-10 flex min-h-[75vh] items-end text-white md:min-h-[80vh]">
         <div className="container-page pb-12 md:pb-14" suppressHydrationWarning>
-          {heroSafe.eyebrow && (
+          {!loading && heroSafe.eyebrow && (
             <p className="hero-eyebrow" suppressHydrationWarning>
               {heroSafe.eyebrow}
             </p>
           )}
-          {heroSafe.artistName && (
+          {!loading && heroSafe.artistName && (
             <h1 className="hero-title" suppressHydrationWarning>
               {heroSafe.artistName}
             </h1>
           )}
-          {(heroSafe.taglineLine1 || heroSafe.taglineLine2) && (
+          {!loading && (heroSafe.taglineLine1 || heroSafe.taglineLine2) && (
             <p className="hero-tagline" suppressHydrationWarning>
               {heroSafe.taglineLine1 && (
                 <span className="block">{heroSafe.taglineLine1}</span>
@@ -145,13 +130,13 @@ export default function Hero() {
               )}
             </p>
           )}
-          {heroSafe.description && (
+          {!loading && heroSafe.description && (
             <p className="hero-description" suppressHydrationWarning>
               {heroSafe.description}
             </p>
           )}
 
-          {slides.length > 1 && (
+          {!loading && slides.length > 1 && (
             <div
               className="mt-6 flex gap-2"
               role="tablist"
