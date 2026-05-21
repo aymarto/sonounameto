@@ -9,25 +9,22 @@ import {
   type CSSProperties,
 } from "react";
 import { getHero } from "@/lib/firestore";
-import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
-import { DEFAULT_HERO_SLIDES } from "@/lib/types";
-import type { HeroSettings } from "@/lib/types";
-
-function slideSrc(url: string | undefined, index: number): string {
-  if (url?.startsWith("/images/") || url?.startsWith("http")) return url;
-  return DEFAULT_HERO_SLIDES[index]?.imageUrl ?? "/images/portrait_0.jpeg";
-}
+import { normalizeHeroSettings } from "@/lib/hero";
+import { EMPTY_HERO, type HeroSettings } from "@/lib/types";
 
 const SLIDE_INTERVAL_MS = 8000;
 const FADE_DURATION_MS = 2400;
 
 export default function Hero() {
-  const [hero, setHero] = useState<HeroSettings>(getLocalHeroFallback());
+  const [hero, setHero] = useState<HeroSettings | null>(null);
   const [index, setIndex] = useState(0);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
   const prevIndexRef = useRef(0);
 
-  const heroSafe = useMemo(() => normalizeHeroSettings(hero), [hero]);
+  const heroSafe = useMemo(
+    () => normalizeHeroSettings(hero ?? EMPTY_HERO),
+    [hero]
+  );
   const slides = heroSafe.slides;
   const slideCount = slides.length;
 
@@ -36,9 +33,9 @@ export default function Hero() {
     (async () => {
       try {
         const fromDb = await getHero();
-        if (!cancelled) setHero(normalizeHeroSettings(fromDb));
+        if (!cancelled) setHero(fromDb ? normalizeHeroSettings(fromDb) : null);
       } catch {
-        if (!cancelled) setHero(getLocalHeroFallback());
+        if (!cancelled) setHero(null);
       }
     })();
     return () => {
@@ -68,9 +65,10 @@ export default function Hero() {
   }, [slideCount]);
 
   useEffect(() => {
-    slides.forEach((slide, i) => {
+    slides.forEach((slide) => {
+      if (!slide.imageUrl) return;
       const img = new window.Image();
-      img.src = slideSrc(slide.imageUrl, i);
+      img.src = slide.imageUrl;
     });
   }, [slides]);
 
@@ -86,7 +84,6 @@ export default function Hero() {
 
   return (
     <>
-      {/* Fond fixe plein écran (comme l’ancien bg-hero-fixed) — visible sous les sections sans fond opaque */}
       <div
         className="hero-slider-bg pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-neutral-900 max-md:absolute max-md:inset-0 max-md:h-[100dvh] max-md:z-0"
         style={
@@ -110,17 +107,11 @@ export default function Hero() {
             >
               <div className="hero-slide-media">
                 <img
-                  src={slideSrc(slide.imageUrl, i)}
+                  src={slide.imageUrl}
                   alt=""
                   decoding="async"
                   loading={i === 0 ? "eager" : "lazy"}
                   className="hero-slide-image"
-                  onError={(e) => {
-                    const fallback = slideSrc(undefined, i);
-                    if (e.currentTarget.src !== fallback) {
-                      e.currentTarget.src = fallback;
-                    }
-                  }}
                 />
               </div>
             </div>
@@ -129,22 +120,33 @@ export default function Hero() {
         <div className="hero-slider-overlay" />
       </div>
 
-      {/* Zone texte hero (fond transparent, le slider reste visible derrière) */}
       <section className="relative z-10 flex min-h-[75vh] items-end text-white md:min-h-[80vh]">
         <div className="container-page pb-12 md:pb-14" suppressHydrationWarning>
-          <p className="hero-eyebrow" suppressHydrationWarning>
-            {heroSafe.eyebrow}
-          </p>
-          <h1 className="hero-title" suppressHydrationWarning>
-            {heroSafe.artistName}
-          </h1>
-          <p className="hero-tagline" suppressHydrationWarning>
-            <span className="block">{heroSafe.taglineLine1}</span>
-            <span className="block lowercase">{heroSafe.taglineLine2}</span>
-          </p>
-          <p className="hero-description" suppressHydrationWarning>
-            {heroSafe.description}
-          </p>
+          {heroSafe.eyebrow && (
+            <p className="hero-eyebrow" suppressHydrationWarning>
+              {heroSafe.eyebrow}
+            </p>
+          )}
+          {heroSafe.artistName && (
+            <h1 className="hero-title" suppressHydrationWarning>
+              {heroSafe.artistName}
+            </h1>
+          )}
+          {(heroSafe.taglineLine1 || heroSafe.taglineLine2) && (
+            <p className="hero-tagline" suppressHydrationWarning>
+              {heroSafe.taglineLine1 && (
+                <span className="block">{heroSafe.taglineLine1}</span>
+              )}
+              {heroSafe.taglineLine2 && (
+                <span className="block lowercase">{heroSafe.taglineLine2}</span>
+              )}
+            </p>
+          )}
+          {heroSafe.description && (
+            <p className="hero-description" suppressHydrationWarning>
+              {heroSafe.description}
+            </p>
+          )}
 
           {slides.length > 1 && (
             <div

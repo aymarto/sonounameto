@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import ProjectCarousel from "@/components/ProjectCarousel";
 import { listPublishedProjects } from "@/lib/firestore-content";
-import { projects as staticProjects } from "@/lib/site-content";
 import type { Project } from "@/lib/types";
 
 export default function HomeProjectsSection() {
@@ -17,7 +17,7 @@ export default function HomeProjectsSection() {
         const rows = await listPublishedProjects();
         if (!cancelled) setItems(rows);
       } catch {
-        if (!cancelled) setItems(staticProjects.filter((p) => p.published !== false));
+        if (!cancelled) setItems([]);
       }
     })();
     return () => {
@@ -44,12 +44,14 @@ export default function HomeProjectsSection() {
       </div>
 
       <div className="mt-8">
-        {items ? (
-          <ProjectCarousel layout="contained" items={items} />
-        ) : (
+        {items === null ? (
           <div className="container-page animate-pulse py-12 text-sm text-neutral-400">
             Chargement…
           </div>
+        ) : items.length === 0 ? (
+          <ContentUnavailable className="py-12" />
+        ) : (
+          <ProjectCarousel layout="contained" items={items} />
         )}
       </div>
 

@@ -1,10 +1,3 @@
-import { artworks, events } from "@/lib/data";
-import {
-  projects,
-  rawWorkImages,
-  references,
-} from "@/lib/site-content";
-
 /** Précharge une image (ne bloque pas si erreur). */
 export function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
@@ -24,56 +17,8 @@ export function preloadImages(urls: string[]): Promise<void> {
   return Promise.all(unique.map(preloadImage)).then(() => undefined);
 }
 
-/** Images locales du hero (repli si Firebase absent). */
-export const HERO_PRELOAD_URLS = [
-  "/images/portrait_0.jpeg",
-  "/images/portrait_1.jpeg",
-  "/images/portrait_2.jpeg",
-];
-
-const ABOUT_IMAGE = "/images/portrait_3_1.jpeg";
-
 /** URLs critiques selon la page visitée au premier chargement. */
-export function getCriticalImageUrls(pathname: string): string[] {
-  if (pathname === "/") {
-    return [
-      ...HERO_PRELOAD_URLS,
-      ABOUT_IMAGE,
-      ...artworks.slice(0, 4).map((a) => a.imageUrl),
-    ];
-  }
-  if (pathname === "/oeuvres" || pathname.startsWith("/oeuvres/")) {
-    return artworks.slice(0, 9).map((a) => a.imageUrl);
-  }
-  if (pathname === "/projets") {
-    return projects.map((p) => p.coverImageUrl);
-  }
-  if (pathname.startsWith("/projets/")) {
-    const id = pathname.split("/")[2];
-    const project = projects.find((p) => p.id === id);
-    if (project) {
-      return [
-        project.coverImageUrl,
-        ...project.artworkIds
-          .map((aid) => artworks.find((a) => a.id === aid)?.imageUrl)
-          .filter((u): u is string => Boolean(u)),
-      ];
-    }
-  }
-  if (pathname === "/evenements") {
-    return events
-      .map((e) => e.imageUrl)
-      .filter((u): u is string => Boolean(u));
-  }
-  if (pathname === "/travail-brut") {
-    return rawWorkImages.map((i) => i.imageUrl);
-  }
-  if (pathname === "/references") {
-    return references.map((r) => r.imageUrl);
-  }
-  if (pathname === "/a-propos") {
-    return ["/images/portrait_3.jpeg", ABOUT_IMAGE];
-  }
+export function getCriticalImageUrls(_pathname: string): string[] {
   return [];
 }
 

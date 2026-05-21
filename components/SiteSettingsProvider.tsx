@@ -10,7 +10,7 @@ import {
 } from "react";
 import { getSiteSettings } from "@/lib/firestore";
 import {
-  DEFAULT_SITE_SETTINGS,
+  EMPTY_SITE_SETTINGS,
   normalizeSiteSettings,
 } from "@/lib/site-settings";
 import type { SiteSettings } from "@/lib/types";
@@ -22,13 +22,13 @@ type SiteSettingsContextValue = {
 };
 
 const SiteSettingsContext = createContext<SiteSettingsContextValue>({
-  settings: DEFAULT_SITE_SETTINGS,
+  settings: EMPTY_SITE_SETTINGS,
   loading: true,
   refresh: async () => {},
 });
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [settings, setSettings] = useState<SiteSettings>(EMPTY_SITE_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
@@ -36,7 +36,7 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       const data = await getSiteSettings();
       setSettings(normalizeSiteSettings(data));
     } catch {
-      setSettings(DEFAULT_SITE_SETTINGS);
+      setSettings(EMPTY_SITE_SETTINGS);
     } finally {
       setLoading(false);
     }

@@ -18,12 +18,6 @@ import {
 import { getFirebase, isFirebaseConfigured } from "@/lib/firebase";
 import { firestoreWriteData } from "@/lib/firestore-write";
 import { isPublished } from "@/lib/publish";
-import {
-  projects as staticProjects,
-  rawWorkImages as staticRawWorks,
-  references as staticReferences,
-} from "@/lib/site-content";
-import { artworks as staticArtworks, events as staticEvents } from "@/lib/data";
 import type {
   ArtEvent,
   Artwork,
@@ -129,16 +123,8 @@ async function fetchRawWorks(): Promise<RawWorkImage[]> {
   return sortByOrder(snap.docs.map((d) => mapRawWork(d.id, d.data())));
 }
 
-function publishedStaticProjects(): Project[] {
-  return sortByOrder(staticProjects).filter(isPublished);
-}
-
-function publishedStaticReferences(): ReferenceItem[] {
-  return sortByOrder(staticReferences).filter(isPublished);
-}
-
-function publishedStaticRawWorks(): RawWorkImage[] {
-  return sortByOrder(staticRawWorks).filter(isPublished);
+function publishedRows<T extends { published?: boolean }>(rows: T[]): T[] {
+  return rows.filter(isPublished);
 }
 
 // ---------- Projects ----------
@@ -153,13 +139,11 @@ export async function listProjects(): Promise<Project[]> {
 }
 
 export async function listPublishedProjects(): Promise<Project[]> {
-  if (!isFirebaseConfigured()) return publishedStaticProjects();
+  if (!isFirebaseConfigured()) return [];
   try {
-    const rows = await fetchProjects();
-    if (rows.length === 0) return publishedStaticProjects();
-    return rows.filter(isPublished);
+    return publishedRows(await fetchProjects());
   } catch {
-    return publishedStaticProjects();
+    return [];
   }
 }
 
@@ -198,8 +182,7 @@ export async function getPublishedProject(id: string): Promise<Project | null> {
   } catch {
     // Firestore indisponible
   }
-  const fallback = staticProjects.find((p) => p.id === id);
-  return fallback && isPublished(fallback) ? fallback : null;
+  return null;
 }
 
 export async function createProject(
@@ -242,13 +225,11 @@ export async function listReferences(): Promise<ReferenceItem[]> {
 }
 
 export async function listPublishedReferences(): Promise<ReferenceItem[]> {
-  if (!isFirebaseConfigured()) return publishedStaticReferences();
+  if (!isFirebaseConfigured()) return [];
   try {
-    const rows = await fetchReferences();
-    if (rows.length === 0) return publishedStaticReferences();
-    return rows.filter(isPublished);
+    return publishedRows(await fetchReferences());
   } catch {
-    return publishedStaticReferences();
+    return [];
   }
 }
 
@@ -322,13 +303,11 @@ export async function listRawWorks(): Promise<RawWorkImage[]> {
 }
 
 export async function listPublishedRawWorks(): Promise<RawWorkImage[]> {
-  if (!isFirebaseConfigured()) return publishedStaticRawWorks();
+  if (!isFirebaseConfigured()) return [];
   try {
-    const rows = await fetchRawWorks();
-    if (rows.length === 0) return publishedStaticRawWorks();
-    return rows.filter(isPublished);
+    return publishedRows(await fetchRawWorks());
   } catch {
-    return publishedStaticRawWorks();
+    return [];
   }
 }
 
@@ -393,33 +372,32 @@ export async function deleteRawWork(id: string): Promise<void> {
 // ---------- Published lists (artworks & events) ----------
 
 export async function listPublishedArtworks(): Promise<Artwork[]> {
-  if (!isFirebaseConfigured()) return staticArtworks.filter(isPublished);
+  if (!isFirebaseConfigured()) return [];
   try {
     const { listArtworks } = await import("@/lib/firestore");
-    const rows = await listArtworks();
-    if (rows.length) return rows.filter(isPublished);
-    return staticArtworks.filter(isPublished);
+    return publishedRows(await listArtworks());
   } catch {
-    return staticArtworks.filter(isPublished);
+    return [];
   }
 }
 
 export async function listPublishedEvents(): Promise<ArtEvent[]> {
-  if (!isFirebaseConfigured()) return staticEvents.filter(isPublished);
+  if (!isFirebaseConfigured()) return [];
   try {
     const { listEvents } = await import("@/lib/firestore");
-    const rows = await listEvents();
-    if (rows.length) return rows.filter(isPublished);
-    return staticEvents.filter(isPublished);
+    return publishedRows(await listEvents());
   } catch {
-    return staticEvents.filter(isPublished);
+    return [];
   }
 }
 
 export async function getPublishedArtwork(id: string): Promise<Artwork | null> {
-  const { getArtwork } = await import("@/lib/firestore");
-  const row = await getArtwork(id);
-  if (row && isPublished(row)) return row;
-  const fallback = staticArtworks.find((a) => a.id === id);
-  return fallback && isPublished(fallback) ? fallback : null;
+  try {
+    const { getArtwork } = await import("@/lib/firestore");
+    const row = await getArtwork(id);
+    if (row && isPublished(row)) return row;
+  } catch {
+    // Firestore indisponible
+  }
+  return null;
 }

@@ -1,19 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { artworks } from "@/lib/data";
 import ArtworkCardMeta from "@/components/ArtworkCardMeta";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import { hasMultipleImages } from "@/lib/artworks";
 import type { Artwork } from "@/lib/types";
 
 type Props = {
-  items?: Artwork[];
+  items: Artwork[];
   basePath?: string;
 };
 
 export default function OeuvresGrid({
-  items = artworks,
+  items,
   basePath = "/oeuvres",
 }: Props) {
+  if (items.length === 0) {
+    return <ContentUnavailable />;
+  }
+
   return (
     <div className="container-page grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-10">
       {items.map((art, index) => (

@@ -3,23 +3,18 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ArtworkGallery from "@/components/ArtworkGallery";
-import { getStaticArtwork } from "@/lib/data";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import { getArtworkImages } from "@/lib/artworks";
 import { getPublishedArtwork } from "@/lib/firestore-content";
 import { formatDate } from "@/lib/format";
-import { isPublished } from "@/lib/publish";
 import type { Artwork } from "@/lib/types";
 
 type Props = {
   id: string;
-  initialArtwork?: Artwork | null;
 };
 
-export default function ArtworkDetail({ id, initialArtwork }: Props) {
-  const [artwork, setArtwork] = useState<Artwork | null | undefined>(() => {
-    if (initialArtwork === undefined) return undefined;
-    return initialArtwork && isPublished(initialArtwork) ? initialArtwork : null;
-  });
+export default function ArtworkDetail({ id }: Props) {
+  const [artwork, setArtwork] = useState<Artwork | null | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -27,24 +22,16 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
     (async () => {
       try {
         const published = await getPublishedArtwork(id);
-        if (!cancelled) {
-          setArtwork(published);
-          return;
-        }
+        if (!cancelled) setArtwork(published);
       } catch {
-        // Firestore indisponible
-      }
-
-      if (!cancelled) {
-        const fallback = getStaticArtwork(id);
-        setArtwork(fallback && isPublished(fallback) ? fallback : null);
+        if (!cancelled) setArtwork(null);
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [id, initialArtwork]);
+  }, [id]);
 
   if (artwork === undefined) {
     return (
@@ -67,13 +54,9 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
   if (artwork === null) {
     return (
       <section className="page-content">
-        <div className="container-page max-w-lg">
-          <p className="eyebrow">Galerie</p>
-          <h1 className="section-title mt-2">Œuvre introuvable</h1>
-          <p className="mt-3 text-neutral-600">
-            Cette œuvre n&apos;existe pas ou a été retirée de la galerie.
-          </p>
-          <Link href="/oeuvres" className="btn-line mt-6 inline-flex">
+        <ContentUnavailable />
+        <div className="container-page mt-6 text-center">
+          <Link href="/oeuvres" className="btn-line inline-flex">
             Retour aux œuvres
           </Link>
         </div>

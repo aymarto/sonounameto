@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { ReferenceItem } from "@/lib/site-content";
+import type { ReferenceItem } from "@/lib/types";
 
 type Props = {
   items: ReferenceItem[];

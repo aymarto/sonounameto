@@ -8,7 +8,7 @@ import PdfUploader from "@/components/admin/PdfUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import { getSiteSettings, setSiteSettings } from "@/lib/firestore";
-import { DEFAULT_SITE_SETTINGS } from "@/lib/site-settings";
+import { EMPTY_SITE_SETTINGS } from "@/lib/site-settings";
 import type { SiteSettings } from "@/lib/types";
 
 const TABS = [
@@ -92,7 +92,7 @@ export default function AdminSitePage() {
         if (!cancelled) setSiteState(data);
       } catch (err) {
         console.error(err);
-        if (!cancelled) setSiteState(DEFAULT_SITE_SETTINGS);
+        if (!cancelled) setSiteState(EMPTY_SITE_SETTINGS);
       }
     })();
     return () => {
@@ -269,25 +269,17 @@ export default function AdminSitePage() {
                 <PdfUploader
                   label="Portfolio PDF"
                   value={
-                    site.portfolioUrl &&
-                    site.portfolioUrl !== DEFAULT_SITE_SETTINGS.portfolioUrl
+                    site.portfolioUrl || site.portfolioPath
                       ? {
                           url: site.portfolioUrl,
                           path: site.portfolioPath,
                           name: "portfolio.pdf",
                         }
-                      : site.portfolioPath
-                        ? {
-                            url: site.portfolioUrl,
-                            path: site.portfolioPath,
-                            name: "portfolio.pdf",
-                          }
-                        : undefined
+                      : undefined
                   }
                   onChange={(value) =>
                     patch({
-                      portfolioUrl:
-                        value?.url ?? DEFAULT_SITE_SETTINGS.portfolioUrl,
+                      portfolioUrl: value?.url ?? "",
                       ...(value?.path ? { portfolioPath: value.path } : {}),
                     })
                   }
@@ -332,8 +324,7 @@ export default function AdminSitePage() {
                   }
                   onChange={(value) =>
                     patch({
-                      aboutImageUrl:
-                        value?.url ?? DEFAULT_SITE_SETTINGS.aboutImageUrl,
+                      aboutImageUrl: value?.url ?? "",
                       ...(value?.path ? { aboutImagePath: value.path } : {}),
                     })
                   }

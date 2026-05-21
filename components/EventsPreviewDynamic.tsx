@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import EventsPreview from "@/components/EventsPreview";
 import { listPublishedEvents } from "@/lib/firestore-content";
-import { events as staticEvents } from "@/lib/data";
 import type { ArtEvent } from "@/lib/types";
 
 type Props = {
@@ -20,7 +19,7 @@ export default function EventsPreviewDynamic({ limit = 3 }: Props) {
         const rows = await listPublishedEvents();
         if (!cancelled) setEvents(rows.slice(0, limit));
       } catch {
-        if (!cancelled) setEvents(staticEvents.slice(0, limit));
+        if (!cancelled) setEvents([]);
       }
     })();
     return () => {
@@ -28,7 +27,7 @@ export default function EventsPreviewDynamic({ limit = 3 }: Props) {
     };
   }, [limit]);
 
-  if (!events) return null;
+  if (events === null) return null;
 
   return <EventsPreview events={events} />;
 }

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
-import { projects as allProjects } from "@/lib/site-content";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import type { Project } from "@/lib/types";
 
 type Props = {
@@ -23,7 +23,7 @@ export default function ProjectCarousel({
   const trackRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
 
-  const list = items ?? (limit ? allProjects.slice(0, limit) : allProjects);
+  const list = items ?? [];
 
   useEffect(() => {
     const track = trackRef.current;
@@ -85,6 +85,10 @@ export default function ProjectCarousel({
     layout === "contained"
       ? "projects-section projects-section--contained"
       : "projects-section projects-section--full";
+
+  if (list.length === 0) {
+    return <ContentUnavailable className="py-12" />;
+  }
 
   return (
     <div className={sectionClass}>

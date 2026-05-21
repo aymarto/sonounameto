@@ -7,7 +7,7 @@ import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { getHero, setHero } from "@/lib/firestore";
 import { normalizeHeroSettings } from "@/lib/hero";
-import { DEFAULT_HERO, DEFAULT_HERO_SLIDES } from "@/lib/types";
+import { EMPTY_HERO } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
 
 const SLIDE_LABELS = ["Image 1", "Image 2", "Image 3"];
@@ -66,10 +66,10 @@ export default function AdminHeroPage() {
     (async () => {
       try {
         const h = await getHero();
-        if (!cancelled) setHeroState(normalizeHeroSettings(h));
+        if (!cancelled) setHeroState(normalizeHeroSettings(h ?? EMPTY_HERO));
       } catch (err) {
         console.error(err);
-        if (!cancelled) setHeroState(DEFAULT_HERO);
+        if (!cancelled) setHeroState(EMPTY_HERO);
       }
     })();
     return () => {
@@ -88,9 +88,12 @@ export default function AdminHeroPage() {
   ) {
     if (!hero) return;
     const slides = [...hero.slides];
+    while (slides.length <= index) {
+      slides.push({ imageUrl: "" });
+    }
     slides[index] = {
-      imageUrl: value?.url ?? DEFAULT_HERO_SLIDES[index]?.imageUrl ?? "",
-      imagePath: value?.path,
+      imageUrl: value?.url ?? "",
+      ...(value?.path ? { imagePath: value.path } : {}),
     };
     setHeroState({ ...hero, slides });
   }

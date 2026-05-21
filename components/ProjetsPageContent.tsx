@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import ProjectsGrid from "@/components/ProjectsGrid";
 import { listPublishedProjects } from "@/lib/firestore-content";
-import { projects as staticProjects } from "@/lib/site-content";
 import type { Project } from "@/lib/types";
 
 export default function ProjetsPageContent() {
@@ -16,7 +16,7 @@ export default function ProjetsPageContent() {
         const rows = await listPublishedProjects();
         if (!cancelled) setItems(rows);
       } catch {
-        if (!cancelled) setItems(staticProjects);
+        if (!cancelled) setItems([]);
       }
     })();
     return () => {
@@ -24,12 +24,16 @@ export default function ProjetsPageContent() {
     };
   }, []);
 
-  if (!items) {
+  if (items === null) {
     return (
       <div className="container-page animate-pulse py-8 text-sm text-neutral-500">
         Chargement…
       </div>
     );
+  }
+
+  if (items.length === 0) {
+    return <ContentUnavailable />;
   }
 
   return <ProjectsGrid items={items} />;

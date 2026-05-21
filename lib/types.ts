@@ -1,11 +1,3 @@
-import {
-  ARTIST_NAME,
-  HERO_DESCRIPTION,
-  HERO_EYEBROW,
-  HERO_TAGLINE_LINE1,
-  HERO_TAGLINE_LINE2,
-} from "@/lib/brand";
-
 export type ArtworkImage = {
   url: string;
   path?: string;
@@ -119,17 +111,14 @@ export type SiteSettings = {
   aboutImagePath?: string;
 };
 
-export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
-  { imageUrl: "/images/portrait_0.jpeg" },
-  { imageUrl: "/images/portrait_1.jpeg" },
-  { imageUrl: "/images/portrait_2.jpeg" },
-];
-
-export const DEFAULT_HERO: HeroSettings = {
-  slides: DEFAULT_HERO_SLIDES,
-  eyebrow: HERO_EYEBROW,
-  artistName: ARTIST_NAME,
-  taglineLine1: HERO_TAGLINE_LINE1,
-  taglineLine2: HERO_TAGLINE_LINE2,
-  description: HERO_DESCRIPTION,
+export const EMPTY_HERO: HeroSettings = {
+  slides: [],
+  eyebrow: "",
+  artistName: "",
+  taglineLine1: "",
+  taglineLine2: "",
+  description: "",
 };
+
+/** @deprecated Utiliser EMPTY_HERO */
+export const DEFAULT_HERO = EMPTY_HERO;

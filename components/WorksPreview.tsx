@@ -1,11 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
-import { artworks } from "@/lib/data";
-import ArtworkCardMeta from "@/components/ArtworkCardMeta";
+import ContentUnavailable from "@/components/ContentUnavailable";
 
 export default function WorksPreview() {
-  const preview = artworks.slice(0, 4);
-
   return (
     <section className="section-pad bg-paper">
       <div className="container-page">
@@ -19,33 +15,7 @@ export default function WorksPreview() {
           </Link>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-6 lg:grid-cols-4">
-          {preview.map((art, index) => (
-            <Link
-              key={art.id}
-              href={`/oeuvres/${art.id}`}
-              className="group block min-w-0"
-            >
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
-                <Image
-                  src={art.imageUrl}
-                  alt={art.title}
-                  fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 50vw"
-                  quality={70}
-                  priority={index < 4}
-                  loading={index < 4 ? "eager" : "lazy"}
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              </div>
-              <ArtworkCardMeta
-                title={art.title}
-                date={art.date}
-                size="md"
-              />
-            </Link>
-          ))}
-        </div>
+        <ContentUnavailable className="py-12" />
 
         <div className="mt-8 md:hidden">
           <Link href="/oeuvres" className="btn-line">

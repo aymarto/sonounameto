@@ -18,10 +18,9 @@ import {
 } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
 import type { Artwork, ArtEvent, HeroSettings, SiteSettings } from "@/lib/types";
-import { DEFAULT_HERO } from "@/lib/types";
-import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
+import { normalizeHeroSettings } from "@/lib/hero";
 import {
-  DEFAULT_SITE_SETTINGS,
+  EMPTY_SITE_SETTINGS,
   normalizeSiteSettings,
 } from "@/lib/site-settings";
 import { isFirebaseConfigured } from "@/lib/firebase";
@@ -221,20 +220,20 @@ export async function deleteEvent(id: string): Promise<void> {
 
 // ---------- Hero settings ----------
 
-export async function getHero(): Promise<HeroSettings> {
+export async function getHero(): Promise<HeroSettings | null> {
   if (!isFirebaseConfigured()) {
-    return getLocalHeroFallback();
+    return null;
   }
 
   try {
     const ref = doc(db(), "settings", "hero");
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      return getLocalHeroFallback();
+      return null;
     }
     return normalizeHeroSettings(snap.data() as Partial<HeroSettings>);
   } catch {
-    return getLocalHeroFallback();
+    return null;
   }
 }
 
@@ -261,18 +260,18 @@ export async function setHero(data: HeroSettings): Promise<void> {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (!isFirebaseConfigured()) {
-    return { ...DEFAULT_SITE_SETTINGS };
+    return { ...EMPTY_SITE_SETTINGS };
   }
 
   try {
     const ref = doc(db(), "settings", "site");
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      return { ...DEFAULT_SITE_SETTINGS };
+      return { ...EMPTY_SITE_SETTINGS };
     }
     return normalizeSiteSettings(snap.data() as Partial<SiteSettings>);
   } catch {
-    return { ...DEFAULT_SITE_SETTINGS };
+    return { ...EMPTY_SITE_SETTINGS };
   }
 }
 

@@ -1,13 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import ContentUnavailable from "@/components/ContentUnavailable";
 import type { Project } from "@/lib/types";
-import { projects as allProjects } from "@/lib/site-content";
 
 type Props = {
-  items?: Project[];
+  items: Project[];
 };
 
-export default function ProjectsGrid({ items = allProjects }: Props) {
+export default function ProjectsGrid({ items }: Props) {
+  if (items.length === 0) {
+    return <ContentUnavailable />;
+  }
+
   return (
     <div className="container-page grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-6 lg:grid-cols-4 lg:gap-y-10">
       {items.map((project, index) => (

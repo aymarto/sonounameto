@@ -1,13 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Preloader from "@/components/Preloader";
-import {
-  getCriticalImageUrls,
-  HERO_PRELOAD_URLS,
-  preloadImages,
-} from "@/lib/preload";
+import { preloadImages } from "@/lib/preload";
 
 const SESSION_KEY = "nounameto-site-ready";
 /** Délai max absolu — la page s’affiche toujours après ce délai */
@@ -34,7 +29,6 @@ export default function SiteReadyGate({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
   const [ready, setReady] = useState(false);
   const [showPreloader, setShowPreloader] = useState(true);
 
@@ -61,14 +55,9 @@ export default function SiteReadyGate({
 
     const failSafe = window.setTimeout(finish, FAILSAFE_MS);
 
-    const criticalUrls =
-      pathname === "/"
-        ? [...HERO_PRELOAD_URLS, "/images/portrait_3_1.jpeg"]
-        : getCriticalImageUrls(pathname).slice(0, 4);
-
     void Promise.all([
       document.fonts?.ready ?? Promise.resolve(),
-      preloadImages(criticalUrls),
+      preloadImages([]),
     ]).then(finish);
 
     return () => {
