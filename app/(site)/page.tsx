@@ -1,7 +1,7 @@
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import HomeProjectsSection from "@/components/HomeProjectsSection";
-import EventsPreview from "@/components/EventsPreview";
+import EventsPreviewDynamic from "@/components/EventsPreviewDynamic";
 import Newsletter from "@/components/Newsletter";
 
 export default function HomePage() {
@@ -11,7 +11,7 @@ export default function HomePage() {
       <div className="relative z-10">
         <AboutSection />
         <HomeProjectsSection />
-        <EventsPreview />
+        <EventsPreviewDynamic />
         <Newsletter />
       </div>
     </div>

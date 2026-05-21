@@ -6,6 +6,17 @@ const nextConfig = {
     return [
       { source: "/galerie", destination: "/oeuvres", permanent: true },
       { source: "/galerie/:id", destination: "/oeuvres/:id", permanent: true },
+      { source: "/admin/galerie", destination: "/admin/oeuvres", permanent: true },
+      {
+        source: "/admin/galerie/nouvelle",
+        destination: "/admin/oeuvres/nouvelle",
+        permanent: true,
+      },
+      {
+        source: "/admin/galerie/edit",
+        destination: "/admin/oeuvres/edit",
+        permanent: true,
+      },
     ];
   },
   async headers() {
@@ -28,6 +39,15 @@ const nextConfig = {
           {
             key: "Cache-Control",
             value: "no-store, no-cache, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/uploads/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400",
           },
         ],
       },

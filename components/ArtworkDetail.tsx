@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import ArtworkGallery from "@/components/ArtworkGallery";
 import { getStaticArtwork } from "@/lib/data";
 import { getArtworkImages } from "@/lib/artworks";
-import { getArtwork } from "@/lib/firestore";
+import { getPublishedArtwork } from "@/lib/firestore-content";
 import { formatDate } from "@/lib/format";
+import { isPublished } from "@/lib/publish";
 import type { Artwork } from "@/lib/types";
 
 type Props = {
@@ -15,26 +16,28 @@ type Props = {
 };
 
 export default function ArtworkDetail({ id, initialArtwork }: Props) {
-  const [artwork, setArtwork] = useState<Artwork | null | undefined>(
-    initialArtwork !== undefined ? initialArtwork : undefined
-  );
+  const [artwork, setArtwork] = useState<Artwork | null | undefined>(() => {
+    if (initialArtwork === undefined) return undefined;
+    return initialArtwork && isPublished(initialArtwork) ? initialArtwork : null;
+  });
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
-        const fromDb = await getArtwork(id);
-        if (!cancelled && fromDb) {
-          setArtwork(fromDb);
+        const published = await getPublishedArtwork(id);
+        if (!cancelled) {
+          setArtwork(published);
           return;
         }
       } catch {
         // Firestore indisponible
       }
 
-      if (!cancelled && initialArtwork === undefined) {
-        setArtwork(getStaticArtwork(id) ?? null);
+      if (!cancelled) {
+        const fallback = getStaticArtwork(id);
+        setArtwork(fallback && isPublished(fallback) ? fallback : null);
       }
     })();
 
@@ -87,7 +90,7 @@ export default function ArtworkDetail({ id, initialArtwork }: Props) {
           href="/oeuvres"
           className="text-xs uppercase tracking-wide-xl text-neutral-500 transition-colors hover:text-black"
         >
-          ← Retour à la galerie
+          ← Retour aux œuvres
         </Link>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-10 lg:items-start">

@@ -7,7 +7,7 @@ export default function NewEventPage() {
   return (
     <>
       <AdminHeader
-        eyebrow="Évènements"
+        eyebrow="Expositions & Évènements"
         title="Nouvel évènement"
         description="Ajoutez une exposition, une résidence ou un salon."
       />

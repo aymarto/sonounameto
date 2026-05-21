@@ -1,4 +1,4 @@
-import { ARTIST_NAME, HERO_EYEBROW } from "@/lib/brand";
+import { normalizeHeroTextFields } from "@/lib/site-settings";
 import {
   DEFAULT_HERO,
   DEFAULT_HERO_SLIDES,
@@ -6,26 +6,15 @@ import {
   type HeroSlide,
 } from "@/lib/types";
 
-/** Titre / sous-titre toujours alignés sur la marque (évite anciennes valeurs Firebase). */
-function withBrandText(
-  data: Partial<HeroSettings> | null | undefined,
-  base: Pick<HeroSettings, "description" | "slides">
-): HeroSettings {
-  return {
-    slides: base.slides,
-    title: HERO_EYEBROW,
-    subtitle: ARTIST_NAME,
-    description: data?.description ?? DEFAULT_HERO.description,
-  };
-}
-
 /** Les 3 images locales du dossier public/images */
 export function getLocalHeroSlides(): HeroSlide[] {
   return DEFAULT_HERO_SLIDES.map((s) => ({ ...s }));
 }
 
 /** Firebase a fourni au moins une image utilisable */
-export function hasFirebaseSlides(data: Partial<HeroSettings> | null | undefined): boolean {
+export function hasFirebaseSlides(
+  data: Partial<HeroSettings> | null | undefined
+): boolean {
   if (!data) return false;
   if (Array.isArray(data.slides) && data.slides.some((s) => s?.imageUrl)) {
     return true;
@@ -40,11 +29,13 @@ export function hasFirebaseSlides(data: Partial<HeroSettings> | null | undefined
 export function normalizeHeroSettings(
   data: Partial<HeroSettings> | null | undefined
 ): HeroSettings {
+  const text = normalizeHeroTextFields(data);
+
   if (!data || !hasFirebaseSlides(data)) {
-    return withBrandText(data, {
+    return {
+      ...text,
       slides: getLocalHeroSlides(),
-      description: data?.description ?? DEFAULT_HERO.description,
-    });
+    };
   }
 
   let slides: HeroSlide[] = [];
@@ -57,17 +48,16 @@ export function normalizeHeroSettings(
     slides = [{ imageUrl: data.imageUrl, imagePath: data.imagePath }];
   }
 
-  // Compléter jusqu'à 3 avec les images locales
   while (slides.length < 3) {
     const fallback = DEFAULT_HERO_SLIDES[slides.length];
     if (fallback) slides.push({ ...fallback });
     else break;
   }
 
-  return withBrandText(data, {
+  return {
+    ...text,
     slides: slides.slice(0, 3),
-    description: data?.description ?? DEFAULT_HERO.description,
-  });
+  };
 }
 
 /** Repli complet : 3 images + textes par défaut */

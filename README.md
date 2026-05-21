@@ -2,7 +2,13 @@
 
 Site vitrine multi-pages pour l'artiste **SONOUNAMETO**, avec un **dashboard d'administration** complet (galerie, évènements, hero) protégé par authentification Firebase.
 
-Stack : Next.js 14 (App Router) · TypeScript · Tailwind CSS · Firebase (Auth + Firestore + Storage).
+Stack : Next.js 14 (App Router) · TypeScript · Tailwind CSS · Firebase (Auth + Firestore) · fichiers sur le serveur.
+
+## Médias (images & PDF)
+
+Les uploads du dashboard passent par **`/api/admin/upload`** et sont enregistrés dans **`public/uploads/`** sur le serveur (local ou cPanel). **Firebase Storage n'est pas utilisé** (plan Spark gratuit).
+
+En production : ne supprimez pas `public/uploads/` lors des déploiements FTP.
 
 ## Structure des routes
 
@@ -69,44 +75,18 @@ NEXT_PUBLIC_FIREBASE_APP_ID=...
 - Collections utilisées par l'app (créées automatiquement à la première écriture) :
   - `artworks` — les œuvres de la galerie
   - `events` — les évènements
-  - `settings/hero` — configuration du hero (image + textes)
+  - `settings/hero` — textes et images du bandeau d'accueil
+  - `settings/site` — marque, footer, contact, à propos
 
-### 4. Activer Cloud Storage
+### 4. Règles Firestore (obligatoire)
 
-- **Storage > Get started**.
-- L'app stocke les images dans `artworks/`, `events/`, `hero/`.
+> ⚠️ Sans ces règles, le dashboard affiche **« Missing or insufficient permissions »**.
 
-### 5. Règles de sécurité (à appliquer)
+Dans la console Firebase : **Firestore Database → Règles** → copiez `firestore.rules` → **Publier**.
 
-> ⚠️ À configurer avant la mise en production.
+**Cloud Storage Firebase : non requis.** Les images/PDF vont dans `public/uploads/` sur le serveur.
 
-**Firestore** :
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Lecture publique
-    match /artworks/{doc}    { allow read: if true; allow write: if request.auth != null; }
-    match /events/{doc}      { allow read: if true; allow write: if request.auth != null; }
-    match /settings/{doc}    { allow read: if true; allow write: if request.auth != null; }
-  }
-}
-```
-
-**Storage** :
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
-```
-
-Pour restreindre l'écriture à un seul email :
+Pour restreindre l'écriture Firestore à un seul email :
 ```
 allow write: if request.auth != null && request.auth.token.email == "admin@exemple.com";
 ```
@@ -115,7 +95,7 @@ allow write: if request.auth != null && request.auth.token.email == "admin@exemp
 
 - **Connexion** : email + mot de passe (Firebase Auth). Redirige vers `/admin`.
 - **Tableau de bord** : compteurs (œuvres, évènements) et raccourcis.
-- **Galerie** : liste en grille, création (image, titre, description courte/longue, date, médium, dimensions), édition, suppression. L'image est stockée sur Firebase Storage.
+- **Galerie** : liste en grille, création (image, titre, description courte/longue, date, médium, dimensions), édition, suppression. L'image est stockée sur le serveur (`public/uploads/artworks/`).
 - **Évènements** : liste, création (image optionnelle, titre, lieu, dates début/fin, description), édition, suppression.
 - **Hero** : modification de l'image de fond, du titre, du sous-titre et de la description. Aperçu en direct.
 - **Déconnexion** : bouton en haut à droite.
@@ -123,7 +103,7 @@ allow write: if request.auth != null && request.auth.token.email == "admin@exemp
 ## Prochaines étapes proposées
 
 1. **Brancher les pages publiques** sur Firestore (actuellement, elles utilisent des données d'exemple statiques dans `lib/data.ts`).
-2. **Restreindre Firebase Auth à un seul email** via les règles Firestore/Storage.
+2. **Restreindre Firebase Auth / Firestore à un seul email** via les règles Firestore.
 3. **Pages de détail** : `/galerie/[id]` et `/evenements/[id]`.
 4. **Newsletter & contact** : enregistrer les soumissions dans Firestore (collections `newsletter`, `messages`).
 5. **Réordonnancement** des œuvres et évènements via drag-and-drop dans l'admin.

@@ -3,9 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
+import PublishField from "@/components/admin/PublishField";
 import { createEvent, deleteEvent, updateEvent } from "@/lib/firestore";
 import { deleteImage } from "@/lib/storage";
-import type { ArtEvent } from "@/lib/types";
+import type { ArtEvent, EventCategory } from "@/lib/types";
 
 type Props = {
   initial?: ArtEvent;
@@ -25,6 +26,10 @@ export default function EventForm({ initial }: Props) {
       ? { url: initial.imageUrl, path: initial.imagePath }
       : null
   );
+  const [published, setPublished] = useState(initial?.published !== false);
+  const [category, setCategory] = useState<EventCategory>(
+    initial?.category === "evenement" ? "evenement" : "exposition"
+  );
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -39,10 +44,16 @@ export default function EventForm({ initial }: Props) {
         title: title.trim(),
         location: location.trim(),
         startDate,
-        endDate: endDate || undefined,
+        ...(endDate ? { endDate } : {}),
         description: description.trim(),
-        imageUrl: image?.url,
-        imagePath: image?.path,
+        category,
+        published,
+        ...(image?.url
+          ? {
+              imageUrl: image.url,
+              ...(image.path ? { imagePath: image.path } : {}),
+            }
+          : {}),
       };
       if (isEdit && initial) {
         await updateEvent(initial.id, payload);
@@ -106,6 +117,23 @@ export default function EventForm({ initial }: Props) {
         </div>
 
         <div>
+          <label htmlFor="category" className="eyebrow block">
+            Catégorie
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) =>
+              setCategory(e.target.value as EventCategory)
+            }
+            className="input-line mt-2"
+          >
+            <option value="exposition">Exposition</option>
+            <option value="evenement">Évènement</option>
+          </select>
+        </div>
+
+        <div>
           <label htmlFor="location" className="eyebrow block">
             Lieu
           </label>
@@ -161,6 +189,8 @@ export default function EventForm({ initial }: Props) {
             className="input-line mt-2 resize-none"
           />
         </div>
+
+        <PublishField published={published} onChange={setPublished} />
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

@@ -18,6 +18,10 @@
 # généré à chaque build (cache bust)
 /public/version.json
 
+# Fichiers uploadés via le dashboard (conservés sur le serveur)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
 # misc
 .DS_Store
 *.pem

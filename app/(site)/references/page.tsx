@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import ReferencesGrid from "@/components/ReferencesGrid";
+import ReferencesPageContent from "@/components/ReferencesPageContent";
 import { ARTIST_NAME, pageTitle } from "@/lib/brand";
-import { references } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: pageTitle("Références"),
@@ -18,7 +17,7 @@ export default function ReferencesPage() {
         description="Expositions, résidences et collaborations — images accompagnées d'un titre et d'une courte description."
       />
       <section className="page-content">
-        <ReferencesGrid items={references} />
+        <ReferencesPageContent />
       </section>
     </>
   );

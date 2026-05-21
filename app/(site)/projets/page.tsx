@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import ProjectsGrid from "@/components/ProjectsGrid";
+import ProjetsPageContent from "@/components/ProjetsPageContent";
 import { ARTIST_NAME, pageTitle } from "@/lib/brand";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function ProjetsPage() {
         description="Séries et collections. Ouvrez un projet pour découvrir les œuvres associées."
       />
       <section className="page-content">
-        <ProjectsGrid />
+        <ProjetsPageContent />
       </section>
     </>
   );

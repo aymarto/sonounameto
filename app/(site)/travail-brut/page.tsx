@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
-import ImageOnlyGrid from "@/components/ImageOnlyGrid";
+import TravailBrutPageContent from "@/components/TravailBrutPageContent";
 import { ARTIST_NAME, pageTitle } from "@/lib/brand";
-import { rawWorkImages } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: pageTitle("Travail brut"),
@@ -18,7 +17,7 @@ export default function TravailBrutPage() {
         description="Sélection d'images sans texte — matière, geste et recherche plastique."
       />
       <section className="page-content">
-        <ImageOnlyGrid images={rawWorkImages} />
+        <TravailBrutPageContent />
       </section>
     </>
   );

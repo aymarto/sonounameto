@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import GalleryName from "@/components/GalleryName";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 function LoginForm() {
   const router = useRouter();
@@ -127,12 +128,20 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const { settings } = useSiteSettings();
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-paper px-5 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <Link href="/">
-            <GalleryName as="span" variant="preloader" className="text-2xl" />
+          <Link href="/" suppressHydrationWarning>
+            <GalleryName
+              as="span"
+              variant="preloader"
+              className="text-2xl"
+              galleryName={settings.galleryName}
+              suppressHydrationWarning
+            />
           </Link>
           <p className="eyebrow mt-4">Espace privé</p>
           <h1 className="section-title mt-2">Connexion</h1>

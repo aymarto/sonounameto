@@ -17,15 +17,35 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-import type { Artwork, ArtEvent, HeroSettings } from "@/lib/types";
+import type { Artwork, ArtEvent, HeroSettings, SiteSettings } from "@/lib/types";
 import { DEFAULT_HERO } from "@/lib/types";
 import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
+import {
+  DEFAULT_SITE_SETTINGS,
+  normalizeSiteSettings,
+} from "@/lib/site-settings";
 import { isFirebaseConfigured } from "@/lib/firebase";
+import { firestoreWriteData } from "@/lib/firestore-write";
 
 function db() {
   const fb = getFirebase();
   if (!fb) throw new Error("Firebase n'est pas configuré.");
   return fb.db;
+}
+
+/** @deprecated Importez firestoreWriteData depuis @/lib/firestore-write */
+export { firestoreWriteData, withoutUndefined } from "@/lib/firestore-write";
+
+function artworkWritePayload(
+  data: Partial<Omit<Artwork, "id" | "createdAt">>
+): Record<string, unknown> {
+  return firestoreWriteData(data as Record<string, unknown>);
+}
+
+function eventWritePayload(
+  data: Partial<Omit<ArtEvent, "id" | "createdAt">>
+): Record<string, unknown> {
+  return firestoreWriteData(data as Record<string, unknown>);
 }
 
 function toISO(value: unknown): string | undefined {
@@ -62,6 +82,7 @@ function mapArtwork(id: string, data: DocumentData): Artwork {
     medium: data.medium,
     dimensions: data.dimensions,
     order: data.order,
+    published: data.published !== false,
     createdAt: toISO(data.createdAt),
     updatedAt: toISO(data.updatedAt),
   };
@@ -75,8 +96,14 @@ function mapEvent(id: string, data: DocumentData): ArtEvent {
     startDate: data.startDate ?? "",
     endDate: data.endDate,
     description: data.description ?? "",
+    category:
+      data.category === "exposition" || data.category === "evenement"
+        ? data.category
+        : undefined,
     imageUrl: data.imageUrl,
     imagePath: data.imagePath,
+    published: data.published !== false,
+    order: data.order,
     createdAt: toISO(data.createdAt),
     updatedAt: toISO(data.updatedAt),
   };
@@ -94,7 +121,11 @@ export async function listArtworks(): Promise<Artwork[]> {
 export function subscribeArtworks(cb: (rows: Artwork[]) => void): Unsubscribe {
   return onSnapshot(
     query(collection(db(), "artworks"), orderBy("date", "desc")),
-    (snap) => cb(snap.docs.map((d) => mapArtwork(d.id, d.data())))
+    (snap) => cb(snap.docs.map((d) => mapArtwork(d.id, d.data()))),
+    (err) => {
+      console.error(err);
+      cb([]);
+    }
   );
 }
 
@@ -109,7 +140,7 @@ export async function createArtwork(
   data: Omit<Artwork, "id" | "createdAt" | "updatedAt">
 ): Promise<string> {
   const ref = await addDoc(collection(db(), "artworks"), {
-    ...data,
+    ...artworkWritePayload(data),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -120,10 +151,13 @@ export async function updateArtwork(
   id: string,
   data: Partial<Omit<Artwork, "id" | "createdAt">>
 ): Promise<void> {
-  await updateDoc(doc(db(), "artworks", id), {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  await updateDoc(
+    doc(db(), "artworks", id),
+    firestoreWriteData({
+      ...artworkWritePayload(data),
+      updatedAt: serverTimestamp(),
+    })
+  );
 }
 
 export async function deleteArtwork(id: string): Promise<void> {
@@ -142,7 +176,11 @@ export async function listEvents(): Promise<ArtEvent[]> {
 export function subscribeEvents(cb: (rows: ArtEvent[]) => void): Unsubscribe {
   return onSnapshot(
     query(collection(db(), "events"), orderBy("startDate", "desc")),
-    (snap) => cb(snap.docs.map((d) => mapEvent(d.id, d.data())))
+    (snap) => cb(snap.docs.map((d) => mapEvent(d.id, d.data()))),
+    (err) => {
+      console.error(err);
+      cb([]);
+    }
   );
 }
 
@@ -157,7 +195,7 @@ export async function createEvent(
   data: Omit<ArtEvent, "id" | "createdAt" | "updatedAt">
 ): Promise<string> {
   const ref = await addDoc(collection(db(), "events"), {
-    ...data,
+    ...eventWritePayload(data),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -168,10 +206,13 @@ export async function updateEvent(
   id: string,
   data: Partial<Omit<ArtEvent, "id" | "createdAt">>
 ): Promise<void> {
-  await updateDoc(doc(db(), "events", id), {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  await updateDoc(
+    doc(db(), "events", id),
+    firestoreWriteData({
+      ...eventWritePayload(data),
+      updatedAt: serverTimestamp(),
+    })
+  );
 }
 
 export async function deleteEvent(id: string): Promise<void> {
@@ -199,11 +240,59 @@ export async function getHero(): Promise<HeroSettings> {
 
 export async function setHero(data: HeroSettings): Promise<void> {
   const normalized = normalizeHeroSettings(data);
-  await setDoc(doc(db(), "settings", "hero"), {
-    slides: normalized.slides,
-    title: normalized.title,
-    subtitle: normalized.subtitle,
-    description: normalized.description,
+  await setDoc(
+    doc(db(), "settings", "hero"),
+    firestoreWriteData({
+      slides: normalized.slides.map((slide) => ({
+        imageUrl: slide.imageUrl,
+        ...(slide.imagePath ? { imagePath: slide.imagePath } : {}),
+      })),
+      eyebrow: normalized.eyebrow,
+      artistName: normalized.artistName,
+      taglineLine1: normalized.taglineLine1,
+      taglineLine2: normalized.taglineLine2,
+      description: normalized.description,
+      updatedAt: serverTimestamp(),
+    })
+  );
+}
+
+// ---------- Site settings ----------
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  if (!isFirebaseConfigured()) {
+    return { ...DEFAULT_SITE_SETTINGS };
+  }
+
+  try {
+    const ref = doc(db(), "settings", "site");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      return { ...DEFAULT_SITE_SETTINGS };
+    }
+    return normalizeSiteSettings(snap.data() as Partial<SiteSettings>);
+  } catch {
+    return { ...DEFAULT_SITE_SETTINGS };
+  }
+}
+
+export async function setSiteSettings(data: SiteSettings): Promise<void> {
+  const n = normalizeSiteSettings(data);
+  const payload: Record<string, unknown> = {
+    galleryName: n.galleryName,
+    footerText: n.footerText,
+    contactEmail: n.contactEmail,
+    contactInstagram: n.contactInstagram,
+    contactFacebook: n.contactFacebook,
+    contactLocation: n.contactLocation,
+    portfolioUrl: n.portfolioUrl,
+    aboutEyebrow: n.aboutEyebrow,
+    aboutTitle: n.aboutTitle,
+    aboutDescription: n.aboutDescription,
+    aboutImageUrl: n.aboutImageUrl,
     updatedAt: serverTimestamp(),
-  });
+  };
+  if (n.portfolioPath) payload.portfolioPath = n.portfolioPath;
+  if (n.aboutImagePath) payload.aboutImagePath = n.aboutImagePath;
+  await setDoc(doc(db(), "settings", "site"), firestoreWriteData(payload));
 }

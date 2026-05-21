@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { uploadImage, deleteImage } from "@/lib/storage";
 
 type Props = {
-  folder: "artworks" | "events" | "hero";
+  folder: "artworks" | "events" | "hero" | "about" | "projects" | "references" | "raw-work";
   value?: { url: string; path?: string };
   onChange: (value: { url: string; path?: string } | null) => void;
   label?: string;

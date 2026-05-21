@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SiteReadyGate from "@/components/SiteReadyGate";
+import { SiteSettingsProvider } from "@/components/SiteSettingsProvider";
 
 export default function SiteLayout({
   children,
@@ -8,10 +9,12 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SiteReadyGate>
-      <Navbar />
-      <main className="relative z-0 min-h-screen overflow-x-visible">{children}</main>
-      <Footer />
-    </SiteReadyGate>
+    <SiteSettingsProvider>
+      <SiteReadyGate>
+        <Navbar />
+        <main className="relative z-0 min-h-screen overflow-x-visible">{children}</main>
+        <Footer />
+      </SiteReadyGate>
+    </SiteSettingsProvider>
   );
 }

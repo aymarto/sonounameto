@@ -1,7 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import ProjectCarousel from "@/components/ProjectCarousel";
+import { listPublishedProjects } from "@/lib/firestore-content";
+import { projects as staticProjects } from "@/lib/site-content";
+import type { Project } from "@/lib/types";
 
 export default function HomeProjectsSection() {
+  const [items, setItems] = useState<Project[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const rows = await listPublishedProjects();
+        if (!cancelled) setItems(rows);
+      } catch {
+        if (!cancelled) setItems(staticProjects.filter((p) => p.published !== false));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section className="section-pad bg-white">
       <div className="container-page">
@@ -21,7 +44,13 @@ export default function HomeProjectsSection() {
       </div>
 
       <div className="mt-8">
-        <ProjectCarousel layout="contained" />
+        {items ? (
+          <ProjectCarousel layout="contained" items={items} />
+        ) : (
+          <div className="container-page animate-pulse py-12 text-sm text-neutral-400">
+            Chargement…
+          </div>
+        )}
       </div>
 
       <div className="container-page mt-6 md:hidden">

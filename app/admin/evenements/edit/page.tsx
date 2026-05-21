@@ -39,7 +39,7 @@ function EditEventContent() {
   if (event === null) {
     return (
       <AdminHeader
-        eyebrow="Évènements"
+        eyebrow="Expositions & Évènements"
         title="Évènement introuvable"
         description="Cet évènement n'existe pas ou a été supprimé."
       />
@@ -49,7 +49,7 @@ function EditEventContent() {
   return (
     <>
       <AdminHeader
-        eyebrow="Évènements"
+        eyebrow="Expositions & Évènements"
         title={event.title || "Modifier l'évènement"}
         description="Modifiez les informations de cet évènement."
       />

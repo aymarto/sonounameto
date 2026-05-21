@@ -9,13 +9,6 @@ import {
   type CSSProperties,
 } from "react";
 import { getHero } from "@/lib/firestore";
-import {
-  ARTIST_NAME,
-  HERO_DESCRIPTION,
-  HERO_EYEBROW,
-  HERO_TAGLINE_LINE1,
-  HERO_TAGLINE_LINE2,
-} from "@/lib/brand";
 import { getLocalHeroFallback, normalizeHeroSettings } from "@/lib/hero";
 import { DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
@@ -140,17 +133,17 @@ export default function Hero() {
       <section className="relative z-10 flex min-h-[75vh] items-end text-white md:min-h-[80vh]">
         <div className="container-page pb-12 md:pb-14" suppressHydrationWarning>
           <p className="hero-eyebrow" suppressHydrationWarning>
-            {HERO_EYEBROW}
+            {heroSafe.eyebrow}
           </p>
           <h1 className="hero-title" suppressHydrationWarning>
-            {ARTIST_NAME}
+            {heroSafe.artistName}
           </h1>
           <p className="hero-tagline" suppressHydrationWarning>
-            <span className="block">{HERO_TAGLINE_LINE1}</span>
-            <span className="block lowercase">{HERO_TAGLINE_LINE2}</span>
+            <span className="block">{heroSafe.taglineLine1}</span>
+            <span className="block lowercase">{heroSafe.taglineLine2}</span>
           </p>
           <p className="hero-description" suppressHydrationWarning>
-            {heroSafe.description || HERO_DESCRIPTION}
+            {heroSafe.description}
           </p>
 
           {slides.length > 1 && (

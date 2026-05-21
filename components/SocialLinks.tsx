@@ -1,3 +1,5 @@
+"use client";
+
 import { SOCIAL_LINKS } from "@/lib/social";
 
 type Variant = "footer" | "page";
@@ -78,33 +80,41 @@ function IconMail({ className }: { className?: string }) {
 type Props = {
   variant?: Variant;
   className?: string;
+  email?: string;
+  instagram?: string;
+  facebook?: string;
+  portfolio?: string;
 };
 
 export default function SocialLinks({
   variant = "page",
   className = "",
+  email = SOCIAL_LINKS.email,
+  instagram = SOCIAL_LINKS.instagram,
+  facebook = SOCIAL_LINKS.facebook,
+  portfolio = SOCIAL_LINKS.portfolio,
 }: Props) {
   const items = [
     {
-      href: SOCIAL_LINKS.instagram,
+      href: instagram,
       label: "Instagram",
       icon: IconInstagram,
       external: true,
     },
     {
-      href: SOCIAL_LINKS.facebook,
+      href: facebook,
       label: "Facebook",
       icon: IconFacebook,
       external: true,
     },
     {
-      href: `mailto:${SOCIAL_LINKS.email}`,
-      label: SOCIAL_LINKS.email,
+      href: `mailto:${email}`,
+      label: email,
       icon: IconMail,
       external: false,
     },
     {
-      href: SOCIAL_LINKS.portfolio,
+      href: portfolio,
       label: "Portfolio",
       icon: IconPortfolio,
       external: true,

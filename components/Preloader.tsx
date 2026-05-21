@@ -1,12 +1,15 @@
 "use client";
 
 import GalleryName from "@/components/GalleryName";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 type Props = {
   visible: boolean;
 };
 
 export default function Preloader({ visible }: Props) {
+  const { settings } = useSiteSettings();
+
   return (
     <div
       role="status"
@@ -21,6 +24,7 @@ export default function Preloader({ visible }: Props) {
         as="p"
         variant="preloader"
         className="px-6"
+        galleryName={settings.galleryName}
         suppressHydrationWarning
       />
       <div className="mt-8 h-px w-12 animate-pulse bg-white/40" />

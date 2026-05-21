@@ -1,7 +1,6 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getStorage, type FirebaseStorage } from "firebase/storage";
 import type { FirebasePublicConfig } from "@/lib/firebase-config";
 import {
   isValidFirebaseConfig,
@@ -29,7 +28,6 @@ type FirebaseHandles = {
   app: FirebaseApp;
   auth: Auth;
   db: Firestore;
-  storage: FirebaseStorage;
 };
 
 let cached: FirebaseHandles | null = null;
@@ -46,7 +44,6 @@ export function getFirebase(): FirebaseHandles | null {
     app,
     auth: getAuth(app),
     db: getFirestore(app),
-    storage: getStorage(app),
   };
 
   return cached;

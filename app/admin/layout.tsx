@@ -1,4 +1,5 @@
 import AdminShell from "@/components/admin/AdminShell";
+import { SiteSettingsProvider } from "@/components/SiteSettingsProvider";
 import { pageTitle } from "@/lib/brand";
 
 export const metadata = {
@@ -11,5 +12,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <SiteSettingsProvider>
+      <AdminShell>{children}</AdminShell>
+    </SiteSettingsProvider>
+  );
 }

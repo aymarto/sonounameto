@@ -6,18 +6,51 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/components/AuthProvider";
 import { getHero, setHero } from "@/lib/firestore";
-import {
-  ARTIST_NAME,
-  HERO_DESCRIPTION,
-  HERO_EYEBROW,
-  HERO_TAGLINE_LINE1,
-  HERO_TAGLINE_LINE2,
-} from "@/lib/brand";
 import { normalizeHeroSettings } from "@/lib/hero";
 import { DEFAULT_HERO, DEFAULT_HERO_SLIDES } from "@/lib/types";
 import type { HeroSettings } from "@/lib/types";
 
 const SLIDE_LABELS = ["Image 1", "Image 2", "Image 3"];
+
+function Field({
+  label,
+  id,
+  value,
+  onChange,
+  multiline = false,
+}: {
+  label: string;
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  multiline?: boolean;
+}) {
+  const className = "input-line mt-2 w-full resize-none";
+  return (
+    <div>
+      <label htmlFor={id} className="eyebrow block">
+        {label}
+      </label>
+      {multiline ? (
+        <textarea
+          id={id}
+          rows={4}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={className}
+        />
+      ) : (
+        <input
+          id={id}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={className}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function AdminHeroPage() {
   const { user, firebaseReady } = useAuth();
@@ -43,6 +76,11 @@ export default function AdminHeroPage() {
       cancelled = true;
     };
   }, [firebaseReady, user]);
+
+  function patch(partial: Partial<HeroSettings>) {
+    if (!hero) return;
+    setHeroState({ ...hero, ...partial });
+  }
 
   function updateSlide(
     index: number,
@@ -94,7 +132,7 @@ export default function AdminHeroPage() {
       <AdminHeader
         eyebrow="Accueil"
         title="Hero / Diaporama"
-        description="3 images en rotation sur l'accueil, plus les textes affichés par-dessus."
+        description="Textes et 3 images du bandeau d'accueil."
       />
 
       <form
@@ -102,21 +140,39 @@ export default function AdminHeroPage() {
         className="grid gap-10 md:grid-cols-[1.2fr_1fr]"
       >
         <div className="space-y-6">
-          <div className="rounded border border-black/10 bg-neutral-50 px-4 py-3 text-sm">
-            <p className="eyebrow">Sur-titre hero</p>
-            <p className="mt-1 font-display text-lg uppercase">{HERO_EYEBROW}</p>
-            <p className="eyebrow mt-4">Artiste</p>
-            <p className="mt-1 font-display text-xl uppercase">{ARTIST_NAME}</p>
-            <p className="eyebrow mt-4">Accroche</p>
-            <p className="mt-1 font-display text-lg leading-snug">
-              {HERO_TAGLINE_LINE1}
-              <br />
-              <span className="lowercase">{HERO_TAGLINE_LINE2}</span>
-            </p>
-            <p className="mt-3 text-xs text-neutral-500">
-              Textes fixes (sans nom de galerie). Modifiez uniquement les images
-              ci-dessous.
-            </p>
+          <div className="space-y-4 border-b border-black/10 pb-8">
+            <p className="eyebrow">Textes du hero</p>
+            <Field
+              label="Sur-titre"
+              id="eyebrow"
+              value={hero.eyebrow}
+              onChange={(eyebrow) => patch({ eyebrow })}
+            />
+            <Field
+              label="Nom de l'artiste"
+              id="artistName"
+              value={hero.artistName}
+              onChange={(artistName) => patch({ artistName })}
+            />
+            <Field
+              label="Accroche — ligne 1"
+              id="taglineLine1"
+              value={hero.taglineLine1}
+              onChange={(taglineLine1) => patch({ taglineLine1 })}
+            />
+            <Field
+              label="Accroche — ligne 2"
+              id="taglineLine2"
+              value={hero.taglineLine2}
+              onChange={(taglineLine2) => patch({ taglineLine2 })}
+            />
+            <Field
+              label="Description"
+              id="description"
+              value={hero.description}
+              onChange={(description) => patch({ description })}
+              multiline
+            />
           </div>
 
           <div className="space-y-8 border-t border-black/10 pt-8">
@@ -169,16 +225,16 @@ export default function AdminHeroPage() {
             )}
             <div className="absolute inset-0 bg-black/40" aria-hidden />
             <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-              <p className="hero-eyebrow">{HERO_EYEBROW}</p>
+              <p className="hero-eyebrow">{hero.eyebrow}</p>
               <h2 className="hero-title mt-3 text-3xl normal-case">
-                {ARTIST_NAME}
+                {hero.artistName}
               </h2>
               <p className="hero-tagline mt-3 text-xl">
-                <span className="block">{HERO_TAGLINE_LINE1}</span>
-                <span className="block lowercase">{HERO_TAGLINE_LINE2}</span>
+                <span className="block">{hero.taglineLine1}</span>
+                <span className="block lowercase">{hero.taglineLine2}</span>
               </p>
               <p className="hero-description mt-3 text-sm text-white/85">
-                {hero.description || HERO_DESCRIPTION}
+                {hero.description}
               </p>
             </div>
           </div>
@@ -200,6 +256,3 @@ export default function AdminHeroPage() {
     </>
   );
 }
-
-
-

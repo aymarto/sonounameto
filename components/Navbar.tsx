@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import GalleryName from "@/components/GalleryName";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 import { NAV_LINKS, isNavActive } from "@/lib/navigation";
 
 const linkClass = (active: boolean) =>
@@ -15,6 +16,7 @@ const linkClass = (active: boolean) =>
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { settings } = useSiteSettings();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -38,7 +40,12 @@ export default function Navbar() {
               className="text-white"
               suppressHydrationWarning
             >
-              <GalleryName as="span" variant="nav" suppressHydrationWarning />
+              <GalleryName
+                as="span"
+                variant="nav"
+                galleryName={settings.galleryName}
+                suppressHydrationWarning
+              />
             </Link>
             <button
               type="button"

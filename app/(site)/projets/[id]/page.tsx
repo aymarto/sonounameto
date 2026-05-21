@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import PageHeader from "@/components/PageHeader";
-import OeuvresGrid from "@/components/OeuvresGrid";
+import ProjetDetailContent from "@/components/ProjetDetailContent";
 import { pageTitle } from "@/lib/brand";
-import { artworks } from "@/lib/data";
 import { getProject } from "@/lib/site-content";
 
 type Props = {
@@ -20,23 +17,5 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function ProjetDetailPage({ params }: Props) {
-  const project = getProject(params.id);
-  if (!project) notFound();
-
-  const projectArtworks = artworks.filter((a) =>
-    project.artworkIds.includes(a.id)
-  );
-
-  return (
-    <>
-      <PageHeader
-        eyebrow="Projet"
-        title={project.title}
-        description={`${projectArtworks.length} œuvre${projectArtworks.length > 1 ? "s" : ""} dans ce projet.`}
-      />
-      <section className="page-content">
-        <OeuvresGrid items={projectArtworks} />
-      </section>
-    </>
-  );
+  return <ProjetDetailContent id={params.id} />;
 }

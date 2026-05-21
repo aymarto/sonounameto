@@ -68,6 +68,13 @@ if (fs.existsSync(publicSrc)) {
   console.log("  ✓ public/");
 }
 
+const uploadsDest = path.join(deployDir, "public", "uploads");
+fs.mkdirSync(uploadsDest, { recursive: true });
+if (!fs.existsSync(path.join(uploadsDest, ".gitkeep"))) {
+  fs.writeFileSync(path.join(uploadsDest, ".gitkeep"), "");
+}
+console.log("  ✓ public/uploads/ (dossier médias serveur)");
+
 // version.json (cache bust côté client)
 const versionSrc = path.join(root, "public", "version.json");
 if (fs.existsSync(versionSrc)) {
@@ -100,6 +107,10 @@ const readme = `# Déploiement SONOUNAMETO — étapes cPanel
    - Node.js 18+
 3. Cliquer sur **Run NPM Install** (installe les dépendances listées dans package.json)
 4. **Restart** l'application
+
+Médias uploadés (dashboard) :
+- Stockés dans public/uploads/ sur le serveur (PAS Firebase Storage)
+- Ne supprimez PAS ce dossier lors des déploiements FTP
 
 Variables d'environnement (si besoin côté serveur) :
 - NODE_ENV=production

@@ -3,14 +3,19 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import GalleryName from "@/components/GalleryName";
 import { useAuth } from "@/components/AuthProvider";
-import { GALLERY_NAME } from "@/lib/brand";
+import { useSiteSettings } from "@/components/SiteSettingsProvider";
 
 const NAV = [
   { href: "/admin", label: "Tableau de bord", exact: true },
-  { href: "/admin/galerie", label: "Galerie" },
-  { href: "/admin/evenements", label: "Évènements" },
+  { href: "/admin/oeuvres", label: "Œuvres" },
+  { href: "/admin/projets", label: "Projets" },
+  { href: "/admin/evenements", label: "Expositions & Évènements" },
+  { href: "/admin/travail-brut", label: "Travail brut" },
+  { href: "/admin/references", label: "Références" },
   { href: "/admin/hero", label: "Hero / Accueil" },
+  { href: "/admin/site", label: "Contenu du site" },
 ];
 
 function isActive(pathname: string, item: (typeof NAV)[number]) {
@@ -24,6 +29,7 @@ export default function AdminShell({
   children: React.ReactNode;
 }) {
   const { user, loading, firebaseReady, signOut } = useAuth();
+  const { settings } = useSiteSettings();
   const router = useRouter();
   const pathname = usePathname();
   const [navOpen, setNavOpen] = useState(false);
@@ -111,9 +117,15 @@ export default function AdminShell({
             </button>
             <Link
               href="/admin"
-              className="whitespace-nowrap font-display text-xl tracking-wide-xl uppercase"
+              className="min-w-0 text-black"
+              suppressHydrationWarning
             >
-              {GALLERY_NAME}
+              <GalleryName
+                as="span"
+                variant="nav"
+                galleryName={settings.galleryName}
+                suppressHydrationWarning
+              />
             </Link>
             <span className="hidden text-xs uppercase tracking-wide-xl text-neutral-500 md:inline">
               · Admin

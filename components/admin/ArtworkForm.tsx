@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GalleryImagesUploader from "@/components/admin/GalleryImagesUploader";
 import ImageUploader from "@/components/admin/ImageUploader";
+import PublishField from "@/components/admin/PublishField";
 import {
   createArtwork,
   deleteArtwork,
@@ -36,6 +37,7 @@ export default function ArtworkForm({ initial }: Props) {
   const [galleryImages, setGalleryImages] = useState<ArtworkImage[]>(
     initial?.galleryImages ?? []
   );
+  const [published, setPublished] = useState(initial?.published !== false);
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -57,11 +59,18 @@ export default function ArtworkForm({ initial }: Props) {
         shortDescription: shortDescription.trim(),
         description: description.trim(),
         date,
-        medium: medium.trim() || undefined,
-        dimensions: dimensions.trim() || undefined,
+        ...(medium.trim() ? { medium: medium.trim() } : {}),
+        ...(dimensions.trim() ? { dimensions: dimensions.trim() } : {}),
         imageUrl: image.url,
-        imagePath: image.path,
-        galleryImages: galleryImages.filter((img) => img.url !== image.url),
+        ...(image.path ? { imagePath: image.path } : {}),
+        galleryImages: galleryImages
+          .filter((img) => img.url !== image.url)
+          .map(({ url, path, alt }) => ({
+            url,
+            ...(path ? { path } : {}),
+            ...(alt ? { alt } : {}),
+          })),
+        published,
       };
 
       if (isEdit && initial) {
@@ -69,7 +78,7 @@ export default function ArtworkForm({ initial }: Props) {
       } else {
         await createArtwork(payload);
       }
-      router.push("/admin/galerie");
+      router.push("/admin/oeuvres");
       router.refresh();
     } catch (err) {
       console.error(err);
@@ -91,7 +100,7 @@ export default function ArtworkForm({ initial }: Props) {
       for (const img of initial.galleryImages ?? []) {
         if (img.path) deleteImage(img.path).catch(() => {});
       }
-      router.push("/admin/galerie");
+      router.push("/admin/oeuvres");
       router.refresh();
     } catch (err) {
       console.error(err);
@@ -201,6 +210,8 @@ export default function ArtworkForm({ initial }: Props) {
             className="input-line mt-2"
           />
         </div>
+
+        <PublishField published={published} onChange={setPublished} />
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

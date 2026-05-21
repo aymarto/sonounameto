@@ -1,8 +1,13 @@
 import Link from "next/link";
-import { events } from "@/lib/data";
+import { events as defaultEvents } from "@/lib/data";
 import { formatDateRange } from "@/lib/format";
+import type { ArtEvent } from "@/lib/types";
 
-export default function EventsPreview() {
+type Props = {
+  events?: ArtEvent[];
+};
+
+export default function EventsPreview({ events = defaultEvents }: Props) {
   return (
     <section className="section-pad bg-white">
       <div className="container-page">
