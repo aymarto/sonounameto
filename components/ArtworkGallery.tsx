@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import { useCallback, useState } from "react";
 import type { DisplayImage } from "@/lib/artworks";
 
@@ -56,7 +56,7 @@ export default function ArtworkGallery({ images, title }: Props) {
             transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
           }}
         >
-          <Image
+          <CmsImage
             key={active.url}
             src={active.url}
             alt={active.alt}
@@ -107,7 +107,7 @@ export default function ArtworkGallery({ images, title }: Props) {
                   : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
-              <Image
+              <CmsImage
                 src={img.url}
                 alt=""
                 fill

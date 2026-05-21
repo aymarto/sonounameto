@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { getFirebase, isFirebaseConfigured } from "@/lib/firebase";
 import { firestoreWriteData } from "@/lib/firestore-write";
+import { resolveMediaUrl } from "@/lib/media-url";
 import { isPublished } from "@/lib/publish";
 import type {
   ArtEvent,
@@ -45,7 +46,7 @@ function mapProject(id: string, data: DocumentData): Project {
   return {
     id,
     title: data.title ?? "",
-    coverImageUrl: data.coverImageUrl ?? "",
+    coverImageUrl: resolveMediaUrl(data.coverImageUrl ?? ""),
     coverImagePath: data.coverImagePath,
     artworkIds: Array.isArray(data.artworkIds)
       ? data.artworkIds.filter((x) => typeof x === "string")
@@ -63,7 +64,7 @@ function mapReference(id: string, data: DocumentData): ReferenceItem {
     id,
     title: data.title ?? "",
     description: data.description,
-    imageUrl: data.imageUrl ?? "",
+    imageUrl: resolveMediaUrl(data.imageUrl ?? ""),
     imagePath: data.imagePath,
     published: data.published !== false,
     order: data.order,
@@ -75,7 +76,7 @@ function mapReference(id: string, data: DocumentData): ReferenceItem {
 function mapRawWork(id: string, data: DocumentData): RawWorkImage {
   return {
     id,
-    imageUrl: data.imageUrl ?? "",
+    imageUrl: resolveMediaUrl(data.imageUrl ?? ""),
     imagePath: data.imagePath,
     alt: data.alt,
     published: data.published !== false,

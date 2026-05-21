@@ -3,13 +3,16 @@
 import { useEffect, useState } from "react";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import ImageOnlyGrid from "@/components/ImageOnlyGrid";
+import { useAuth } from "@/components/AuthProvider";
 import { listPublishedRawWorks } from "@/lib/firestore-content";
 import type { RawWorkImage } from "@/lib/types";
 
 export default function TravailBrutPageContent() {
+  const { firebaseReady } = useAuth();
   const [images, setImages] = useState<RawWorkImage[] | null>(null);
 
   useEffect(() => {
+    if (!firebaseReady) return;
     let cancelled = false;
     (async () => {
       try {
@@ -22,9 +25,9 @@ export default function TravailBrutPageContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseReady]);
 
-  if (images === null) {
+  if (!firebaseReady || images === null) {
     return (
       <div className="container-page animate-pulse py-8 text-sm text-neutral-500">
         Chargement…

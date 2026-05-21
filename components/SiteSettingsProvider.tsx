@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import { getSiteSettings } from "@/lib/firestore";
 import {
   EMPTY_SITE_SETTINGS,
@@ -28,10 +29,13 @@ const SiteSettingsContext = createContext<SiteSettingsContextValue>({
 });
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
+  const { firebaseReady } = useAuth();
   const [settings, setSettings] = useState<SiteSettings>(EMPTY_SITE_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
+    if (!firebaseReady) return;
+    setLoading(true);
     try {
       const data = await getSiteSettings();
       setSettings(normalizeSiteSettings(data));
@@ -43,8 +47,27 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    refresh();
-  }, []);
+    if (!firebaseReady) {
+      setLoading(true);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getSiteSettings();
+        if (!cancelled) setSettings(normalizeSiteSettings(data));
+      } catch {
+        if (!cancelled) setSettings(EMPTY_SITE_SETTINGS);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [firebaseReady]);
 
   const value = useMemo(
     () => ({ settings, loading, refresh }),

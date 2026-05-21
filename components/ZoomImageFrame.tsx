@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import { useCallback, useState } from "react";
 
 type Props = {
@@ -72,7 +72,7 @@ export default function ZoomImageFrame({
           transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
         }}
       >
-        <Image
+        <CmsImage
           src={src}
           alt={alt}
           fill

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import Link from "next/link";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import type { Project } from "@/lib/types";
@@ -21,7 +21,7 @@ export default function ProjectsGrid({ items }: Props) {
           className="group block"
         >
           <article className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
-            <Image
+            <CmsImage
               src={project.coverImageUrl}
               alt={project.title}
               fill

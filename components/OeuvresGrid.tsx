@@ -1,4 +1,4 @@
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import Link from "next/link";
 import ArtworkCardMeta from "@/components/ArtworkCardMeta";
 import ContentUnavailable from "@/components/ContentUnavailable";
@@ -28,7 +28,7 @@ export default function OeuvresGrid({
         >
           <article className="flex min-w-0 flex-col">
             <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100">
-              <Image
+              <CmsImage
                 src={art.imageUrl}
                 alt={art.title}
                 fill

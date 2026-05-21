@@ -1,4 +1,4 @@
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import type { ReferenceItem } from "@/lib/types";
 
 type Props = {
@@ -11,7 +11,7 @@ export default function ReferencesGrid({ items }: Props) {
       {items.map((ref) => (
         <article key={ref.id} className="flex flex-col">
           <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
-            <Image
+            <CmsImage
               src={ref.imageUrl}
               alt={ref.title}
               fill

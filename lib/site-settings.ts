@@ -1,4 +1,5 @@
 import type { HeroSettings, SiteSettings } from "@/lib/types";
+import { resolveMediaUrl } from "@/lib/media-url";
 
 /** Valeurs vides — aucun contenu CMS par défaut côté public. */
 export const EMPTY_SITE_SETTINGS: SiteSettings = {
@@ -35,7 +36,7 @@ export function normalizeSiteSettings(
     aboutEyebrow: data.aboutEyebrow?.trim() ?? "",
     aboutTitle: data.aboutTitle?.trim() ?? "",
     aboutDescription: data.aboutDescription?.trim() ?? "",
-    aboutImageUrl: data.aboutImageUrl?.trim() ?? "",
+    aboutImageUrl: resolveMediaUrl(data.aboutImageUrl?.trim() ?? ""),
     ...(data.aboutImagePath ? { aboutImagePath: data.aboutImagePath } : {}),
   };
 }

@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import PageHeader from "@/components/PageHeader";
+import { useAuth } from "@/components/AuthProvider";
 import { formatDateRange } from "@/lib/format";
 import { listPublishedEvents } from "@/lib/firestore-content";
 import type { ArtEvent } from "@/lib/types";
 
 export default function EvenementsPageContent() {
+  const { firebaseReady } = useAuth();
   const [events, setEvents] = useState<ArtEvent[] | null>(null);
 
   useEffect(() => {
+    if (!firebaseReady) return;
     let cancelled = false;
     (async () => {
       try {
@@ -24,9 +27,9 @@ export default function EvenementsPageContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseReady]);
 
-  if (events === null) {
+  if (!firebaseReady || events === null) {
     return (
       <div className="container-page animate-pulse py-16 text-sm text-neutral-500">
         Chargement…
@@ -57,16 +60,12 @@ export default function EvenementsPageContent() {
               >
                 {ev.imageUrl && (
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-100">
-                    <Image
+                    <CmsImage
                       src={ev.imageUrl}
                       alt={ev.title}
                       fill
                       sizes="(min-width: 768px) 50vw, 100vw"
                       className="object-cover"
-                      unoptimized={
-                        ev.imageUrl.startsWith("http") ||
-                        ev.imageUrl.startsWith("/uploads/")
-                      }
                     />
                   </div>
                 )}

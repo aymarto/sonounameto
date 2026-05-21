@@ -26,18 +26,20 @@ export default function GalleryName({
   suppressHydrationWarning,
   galleryName = GALLERY_NAME,
 }: Props) {
+  const name = galleryName?.trim() || GALLERY_NAME;
+
   if (variant === "nav") {
     return (
       <Tag
         className={`${variantClass.nav} ${className}`.trim()}
         suppressHydrationWarning={suppressHydrationWarning}
       >
-        {galleryName}
+        {name}
       </Tag>
     );
   }
 
-  const [line1, line2] = splitGalleryName(galleryName);
+  const [line1, line2] = splitGalleryName(name);
 
   return (
     <Tag

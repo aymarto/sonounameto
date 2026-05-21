@@ -3,13 +3,16 @@
 import { useEffect, useState } from "react";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import ReferencesGrid from "@/components/ReferencesGrid";
+import { useAuth } from "@/components/AuthProvider";
 import { listPublishedReferences } from "@/lib/firestore-content";
 import type { ReferenceItem } from "@/lib/types";
 
 export default function ReferencesPageContent() {
+  const { firebaseReady } = useAuth();
   const [items, setItems] = useState<ReferenceItem[] | null>(null);
 
   useEffect(() => {
+    if (!firebaseReady) return;
     let cancelled = false;
     (async () => {
       try {
@@ -22,9 +25,9 @@ export default function ReferencesPageContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseReady]);
 
-  if (items === null) {
+  if (!firebaseReady || items === null) {
     return (
       <div className="container-page animate-pulse py-8 text-sm text-neutral-500">
         Chargement…

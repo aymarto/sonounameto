@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import ZoomImageFrame from "@/components/ZoomImageFrame";
@@ -129,7 +129,7 @@ export default function ImageOnlyGrid({ images }: Props) {
             className="group relative aspect-[3/4] overflow-hidden bg-neutral-100 text-left"
             aria-label={`Agrandir l'image ${index + 1}`}
           >
-            <Image
+            <CmsImage
               src={img.imageUrl}
               alt={img.alt ?? "Travail brut"}
               fill

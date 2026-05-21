@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import Link from "next/link";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import { useSiteSettings } from "@/components/SiteSettingsProvider";
@@ -35,14 +35,13 @@ export default function AboutSection() {
       <div className="container-page grid gap-8 md:grid-cols-2 md:items-center md:gap-10">
         {settings.aboutImageUrl && (
           <div className="relative aspect-[4/5] w-full overflow-hidden">
-            <Image
+            <CmsImage
               src={settings.aboutImageUrl}
               alt={`Portrait de ${ARTIST_NAME}`}
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover grayscale"
               priority
-              unoptimized={settings.aboutImageUrl.startsWith("http")}
             />
           </div>
         )}

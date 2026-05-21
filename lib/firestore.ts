@@ -25,6 +25,7 @@ import {
 } from "@/lib/site-settings";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { firestoreWriteData } from "@/lib/firestore-write";
+import { resolveMediaUrl } from "@/lib/media-url";
 
 function db() {
   const fb = getFirebase();
@@ -62,7 +63,7 @@ function mapGalleryImages(data: DocumentData): Artwork["galleryImages"] {
   return data.galleryImages
     .filter((item) => item && typeof item.url === "string")
     .map((item) => ({
-      url: item.url as string,
+      url: resolveMediaUrl(item.url as string),
       path: typeof item.path === "string" ? item.path : undefined,
       alt: typeof item.alt === "string" ? item.alt : undefined,
     }));
@@ -75,7 +76,7 @@ function mapArtwork(id: string, data: DocumentData): Artwork {
     shortDescription: data.shortDescription ?? "",
     description: data.description ?? "",
     date: data.date ?? "",
-    imageUrl: data.imageUrl ?? "",
+    imageUrl: resolveMediaUrl(data.imageUrl ?? ""),
     imagePath: data.imagePath,
     galleryImages: mapGalleryImages(data),
     medium: data.medium,
@@ -99,7 +100,7 @@ function mapEvent(id: string, data: DocumentData): ArtEvent {
       data.category === "exposition" || data.category === "evenement"
         ? data.category
         : undefined,
-    imageUrl: data.imageUrl,
+    imageUrl: data.imageUrl ? resolveMediaUrl(data.imageUrl) : undefined,
     imagePath: data.imagePath,
     published: data.published !== false,
     order: data.order,

@@ -8,6 +8,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import { getHero } from "@/lib/firestore";
 import { normalizeHeroSettings } from "@/lib/hero";
 import { EMPTY_HERO, type HeroSettings } from "@/lib/types";
@@ -16,6 +17,7 @@ const SLIDE_INTERVAL_MS = 8000;
 const FADE_DURATION_MS = 2400;
 
 export default function Hero() {
+  const { firebaseReady } = useAuth();
   const [hero, setHero] = useState<HeroSettings | null>(null);
   const [index, setIndex] = useState(0);
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
@@ -29,6 +31,7 @@ export default function Hero() {
   const slideCount = slides.length;
 
   useEffect(() => {
+    if (!firebaseReady) return;
     let cancelled = false;
     (async () => {
       try {
@@ -41,7 +44,7 @@ export default function Hero() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseReady]);
 
   useEffect(() => {
     if (index >= slideCount) setIndex(0);

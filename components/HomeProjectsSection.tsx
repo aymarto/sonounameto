@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import ContentUnavailable from "@/components/ContentUnavailable";
 import ProjectCarousel from "@/components/ProjectCarousel";
 import { listPublishedProjects } from "@/lib/firestore-content";
 import type { Project } from "@/lib/types";
 
 export default function HomeProjectsSection() {
+  const { firebaseReady } = useAuth();
   const [items, setItems] = useState<Project[] | null>(null);
 
   useEffect(() => {
+    if (!firebaseReady) return;
     let cancelled = false;
     (async () => {
       try {
@@ -23,7 +26,7 @@ export default function HomeProjectsSection() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseReady]);
 
   return (
     <section className="section-pad bg-white">
@@ -44,7 +47,7 @@ export default function HomeProjectsSection() {
       </div>
 
       <div className="mt-8">
-        {items === null ? (
+        {items === null || !firebaseReady ? (
           <div className="container-page animate-pulse py-12 text-sm text-neutral-400">
             Chargement…
           </div>

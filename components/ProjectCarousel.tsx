@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CmsImage from "@/components/CmsImage";
 import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
 import ContentUnavailable from "@/components/ContentUnavailable";
@@ -117,7 +117,7 @@ export default function ProjectCarousel({
                 draggable={false}
               >
                 <article className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
-                  <Image
+                  <CmsImage
                     src={project.coverImageUrl}
                     alt={project.title}
                     fill

@@ -64,7 +64,7 @@ async function loadFirebaseConfig(): Promise<FirebasePublicConfig | null> {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [firebaseReady, setFirebaseReady] = useState(true);
+  const [firebaseReady, setFirebaseReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,8 +79,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const fb = getFirebase();
+      setFirebaseReady(Boolean(fb));
+
       if (!fb) {
-        setFirebaseReady(false);
         setLoading(false);
         return;
       }

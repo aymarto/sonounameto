@@ -1,4 +1,5 @@
 import { normalizeHeroTextFields } from "@/lib/site-settings";
+import { resolveMediaUrl } from "@/lib/media-url";
 import type { HeroSettings, HeroSlide } from "@/lib/types";
 
 function extractSlides(
@@ -10,7 +11,7 @@ function extractSlides(
     return data.slides
       .filter((s) => s && typeof s.imageUrl === "string" && s.imageUrl.trim())
       .map((s) => ({
-        imageUrl: s.imageUrl.trim(),
+        imageUrl: resolveMediaUrl(s.imageUrl.trim()),
         ...(s.imagePath ? { imagePath: s.imagePath } : {}),
       }));
   }
@@ -18,7 +19,7 @@ function extractSlides(
   if (typeof data.imageUrl === "string" && data.imageUrl.trim()) {
     return [
       {
-        imageUrl: data.imageUrl.trim(),
+        imageUrl: resolveMediaUrl(data.imageUrl.trim()),
         ...(data.imagePath ? { imagePath: data.imagePath } : {}),
       },
     ];
