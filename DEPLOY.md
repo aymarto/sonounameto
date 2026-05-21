@@ -1,4 +1,4 @@
-# Déploiement — sonounameto.aymart.bj
+# Déploiement — galerienounameto.aymart.bj
 
 Mode **Next.js standalone** : le build tourne sur GitHub Actions, le FTP n'envoie **pas** `node_modules`.
 
@@ -19,7 +19,30 @@ Le compte FTP ouvre **directement** le dossier du site. Le workflow utilise `REM
 | `CPANEL_SERVER` | Hôte FTP |
 | `CPANEL_USER` | Utilisateur FTP |
 | `CPANEL_PWD` | Mot de passe |
-| `NEXT_PUBLIC_FIREBASE_*` | 6 variables (build) |
+
+Les secrets Firebase **ne sont plus nécessaires dans GitHub** : configurez-les dans cPanel (voir ci-dessous).
+
+## cPanel — variables Firebase (runtime)
+
+Dans **Setup Node.js App → Environment variables**, ajoutez :
+
+| Variable | Exemple |
+|----------|---------|
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | `AIzaSy...` |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | `votre-projet.firebaseapp.com` |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | `votre-projet` |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | `votre-projet.firebasestorage.app` |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | `123456789` |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | `1:123:web:abc` |
+
+Puis **Save** et **Restart**. Vérifiez : `https://galerienounameto.aymart.bj/api/firebase-config` → `"configured": true`.
+
+> Les clés Firebase client sont publiques par nature ; elles ne doivent simplement pas être commitées dans le dépôt. La sécurité repose sur **Authentication** et les **règles Firestore**.
+
+### Firebase Console — domaine autorisé
+
+Dans **Authentication → Settings → Authorized domains**, ajoutez :
+- `galerienounameto.aymart.bj`
 
 ## cPanel — après chaque déploiement
 
@@ -64,7 +87,7 @@ Si `node_modules` a été uploadé par erreur sur le serveur, supprime-le en FTP
 - **Safari (iPhone)** : Réglages → Safari → Effacer historique et données de sites → confirmer, ou maintenir le bouton recharger dans la barre d’adresse → « Recharger sans le contenu en cache ».
 - **Chrome (Android)** : ⋮ → Historique → Effacer les données de navigation → Images et fichiers en cache.
 
-Puis rouvrez `https://sonounameto.aymart.bj` et vérifiez que **Run NPM Install + Restart** ont bien été faits sur cPanel après le dernier push sur `production`.
+Puis rouvrez `https://galerienounameto.aymart.bj` et vérifiez que **Run NPM Install + Restart** ont bien été faits sur cPanel après le dernier push sur `production`.
 
 ## LiteSpeed Cache (cause fréquente sur mobile)
 

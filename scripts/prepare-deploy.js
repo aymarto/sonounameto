@@ -112,9 +112,18 @@ Médias uploadés (dashboard) :
 - Stockés dans public/uploads/ sur le serveur (PAS Firebase Storage)
 - Ne supprimez PAS ce dossier lors des déploiements FTP
 
-Variables d'environnement (si besoin côté serveur) :
+Variables d'environnement (Setup Node.js App → Environment variables) :
 - NODE_ENV=production
 - PORT (souvent défini automatiquement par cPanel)
+- NEXT_PUBLIC_FIREBASE_API_KEY
+- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+- NEXT_PUBLIC_FIREBASE_PROJECT_ID
+- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+- NEXT_PUBLIC_FIREBASE_APP_ID
+
+Ces variables sont lues au runtime par /api/firebase-config (pas besoin de les mettre dans GitHub).
+Test : https://votre-domaine/api/firebase-config → configured: true
 `;
 fs.writeFileSync(path.join(deployDir, "CPANEL-INSTALL.txt"), readme);
 

@@ -1,4 +1,4 @@
-name: Deploy SONOUNAMETO (sonounameto.aymart.bj)
+name: Deploy SONOUNAMETO (galerienounameto.aymart.bj)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 env:
   NODE_VERSION: "18"
-  DOMAIN: sonounameto.aymart.bj
+  DOMAIN: galerienounameto.aymart.bj
   # Le compte FTP est déjà chrooté dans le dossier du site → racine "/"
   REMOTE_DIR: /
 
@@ -41,13 +41,6 @@ jobs:
         run: node scripts/write-version.js
 
       - name: Build for production
-        env:
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
         run: npm run build:simple
 
       - name: Verify deployment files
@@ -83,9 +76,10 @@ jobs:
           echo "Déploiement FTP terminé : https://${{ env.DOMAIN }}"
           echo ""
           echo "Étape manuelle sur cPanel (OBLIGATOIRE après chaque déploiement) :"
-          echo "  1. Setup Node.js App → Run NPM Install"
-          echo "  2. Restart l'application (startup: server.js)"
-          echo "  3. LiteSpeed → Purge All (vider le cache)"
+          echo "  1. Vérifier les variables NEXT_PUBLIC_FIREBASE_* dans Setup Node.js App"
+          echo "  2. Run NPM Install"
+          echo "  3. Restart l'application (startup: server.js)"
+          echo "  4. LiteSpeed → Purge All (vider le cache)"
           echo ""
           echo "Si le site affiche 403 : supprimer public/.htaccess sur le serveur (ne pas le remettre)."
           echo "node_modules n'est PAS envoyé par FTP — il est créé sur le serveur."

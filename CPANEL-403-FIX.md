@@ -1,4 +1,4 @@
-# Réparer le 403 Forbidden (sonounameto.aymart.bj)
+# Réparer le 403 Forbidden (galerienounameto.aymart.bj)
 
 ## Ce n’est pas le `.htaccess` dans `public/`
 
@@ -28,7 +28,7 @@ Retournez dans le dossier où se trouvent `server.js`, `package.json`, `.next`, 
 ## Étape 2 — Régénérer la config Node.js (cPanel)
 
 1. cPanel → **Setup Node.js App** / **Application Node.js**.
-2. Ouvrez l’application du domaine **sonounameto.aymart.bj**.
+2. Ouvrez l’application du domaine **galerienounameto.aymart.bj**.
 3. Vérifiez :
    - **Application root** = dossier avec `server.js` (votre capture d’écran).
    - **Application startup file** = `server.js` (ou `app.js`).
@@ -53,7 +53,7 @@ Si `public/images` est vide ou absent :
 ## Étape 4 — Cache LiteSpeed
 
 1. **LiteSpeed Web Cache Manager** → **Purge All**.
-2. Testez en **navigation privée** : https://sonounameto.aymart.bj
+2. Testez en **navigation privée** : https://galerienounameto.aymart.bj
 
 ---
 
@@ -64,7 +64,7 @@ Si `public/images` est vide ou absent :
 3. **Create Application** :
    - Node 18+
    - Application root = dossier avec `server.js`
-   - URL = `sonounameto.aymart.bj`
+   - URL = `galerienounameto.aymart.bj`
    - Startup file = `server.js`
 4. **Run NPM Install** → **Start**.
 
@@ -72,14 +72,14 @@ Si `public/images` est vide ou absent :
 
 ## Vérification
 
-- https://sonounameto.aymart.bj/ doit répondre **200** (pas 403).
-- https://sonounameto.aymart.bj/version.json doit afficher du JSON (après un build récent).
+- https://galerienounameto.aymart.bj/ doit répondre **200** (pas 403).
+- https://galerienounameto.aymart.bj/version.json doit afficher du JSON (après un build récent).
 
 ---
 
 ## Domaine pointe-t-il sur `public/` par erreur ?
 
-cPanel → **Domains** → **sonounameto.aymart.bj** → **Document Root**.
+cPanel → **Domains** → **galerienounameto.aymart.bj** → **Document Root**.
 
 - **Correct** : racine de l’app Node (là où est `server.js`), ou la valeur indiquée par **Setup Node.js App**.
 - **Incorrect** : uniquement le sous-dossier `public/` → provoque un **403** (pas de `index.html`).

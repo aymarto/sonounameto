@@ -8,17 +8,17 @@ export type FirebasePublicConfig = {
 };
 
 /**
- * Valeurs par défaut (alignées sur .env.local).
- * Utilisées au build et en secours si les variables d'environnement sont absentes.
- * Les clés NEXT_PUBLIC_* Firebase sont publiques côté client.
+ * Repli vide — la config doit venir des variables d'environnement
+ * (.env.local en dev, cPanel → Setup Node.js App en production).
+ * Les clés Firebase client sont publiques ; la sécurité repose sur Auth + règles Firestore.
  */
 export const DEFAULT_FIREBASE_CONFIG: FirebasePublicConfig = {
-  apiKey: "AIzaSyCYCRfUewRjcw5nBCGdwG7Qt1wv9uKireY",
-  authDomain: "sonounameto-f266d.firebaseapp.com",
-  projectId: "sonounameto-f266d",
-  storageBucket: "sonounameto-f266d.firebasestorage.app",
-  messagingSenderId: "288159771588",
-  appId: "1:288159771588:web:e3d28305d836d2c1f7d291",
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
 };
 
 function envOrDefault(
@@ -29,7 +29,7 @@ function envOrDefault(
   return v || fallback;
 }
 
-/** Config Firebase : variables d'env en priorité, puis valeurs par défaut. */
+/** Config Firebase : variables d'env uniquement (pas de secrets dans le code). */
 export function resolveFirebaseConfig(): FirebasePublicConfig {
   return {
     apiKey: envOrDefault(
