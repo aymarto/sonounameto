@@ -10,8 +10,6 @@ import {
   listRawWorks,
   listReferences,
 } from "@/lib/firestore-content";
-import type { MigrationResult } from "@/lib/migration/types";
-import { runStaticMigration } from "@/lib/migrate-static-firestore";
 
 async function loadCounts() {
   const [a, e, p, ref, raw] = await Promise.all([
@@ -45,11 +43,6 @@ export default function AdminDashboard() {
     references: null,
     rawWorks: null,
   });
-  const [migrating, setMigrating] = useState(false);
-  const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(
-    null
-  );
-  const [migrationError, setMigrationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!firebaseReady || !user) return;
@@ -66,34 +59,6 @@ export default function AdminDashboard() {
       cancelled = true;
     };
   }, [firebaseReady, user]);
-
-  async function handleMigrateStatic() {
-    if (!user) return;
-    const ok = window.confirm(
-      "Migrer les données statiques ?\n\n" +
-        "1. Copie les images de public/images/ vers public/uploads/\n" +
-        "2. Met à jour Firestore avec les nouvelles URLs\n\n" +
-        "Les documents existants avec les mêmes IDs seront écrasés."
-    );
-    if (!ok) return;
-
-    setMigrating(true);
-    setMigrationError(null);
-    setMigrationResult(null);
-    try {
-      const token = await user.getIdToken();
-      const result = await runStaticMigration(token);
-      setMigrationResult(result);
-      setCounts(await loadCounts());
-    } catch (err) {
-      console.error(err);
-      setMigrationError(
-        err instanceof Error ? err.message : "Migration impossible."
-      );
-    } finally {
-      setMigrating(false);
-    }
-  }
 
   const stats = [
     { label: "Œuvres", value: counts.artworks, href: "/admin/oeuvres" },
@@ -131,49 +96,6 @@ export default function AdminDashboard() {
             </p>
           </Link>
         ))}
-      </section>
-
-      <section className="mt-12 border border-black/10 bg-white p-6 md:p-8">
-        <p className="eyebrow">Migration</p>
-        <h2 className="section-title mt-2 text-2xl">
-          Données statiques → uploads + Firebase
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-600">
-          Copie les images de démo depuis{" "}
-          <code className="bg-neutral-100 px-1">public/images/</code> vers{" "}
-          <code className="bg-neutral-100 px-1">public/uploads/</code>, puis
-          enregistre le contenu (œuvres, projets, évènements, références,
-          travail brut, hero, site) dans Firestore avec les nouvelles URLs.
-        </p>
-        <button
-          type="button"
-          onClick={handleMigrateStatic}
-          disabled={migrating || !firebaseReady || !user}
-          className="btn-line mt-6 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {migrating ? "Migration en cours…" : "Lancer la migration"}
-        </button>
-        {migrationResult && (
-          <p className="mt-4 text-sm text-green-800">
-            Migration réussie — {migrationResult.imagesCopied} image
-            {migrationResult.imagesCopied > 1 ? "s" : ""} copiée
-            {migrationResult.imagesCopied > 1 ? "s" : ""},{" "}
-            {migrationResult.artworks} œuvres, {migrationResult.events}{" "}
-            évènements, {migrationResult.projects} projets,{" "}
-            {migrationResult.references} références, {migrationResult.rawWorks}{" "}
-            travail brut, {migrationResult.settings} réglages.
-            {migrationResult.missingImages.length > 0 && (
-              <>
-                {" "}
-                Images introuvables :{" "}
-                {migrationResult.missingImages.join(", ")}
-              </>
-            )}
-          </p>
-        )}
-        {migrationError && (
-          <p className="mt-4 text-sm text-red-700">{migrationError}</p>
-        )}
       </section>
 
       <section className="mt-12">
